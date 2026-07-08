@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/DoctorsManagementSystemBackend/">
+    <Project Path="DoctorsManagementSystemBackend/DoctorsManagementSystem.csproj" />
+  </Folder>
+  <Project Path="DoctorsManagementSystem.Desktop/DoctorsManagementSystem.Desktop.csproj" />
+  <Project Path="DoctorsManagementSystem.Shared/DoctorsManagementSystem.Shared.csproj" />
+</Solution>

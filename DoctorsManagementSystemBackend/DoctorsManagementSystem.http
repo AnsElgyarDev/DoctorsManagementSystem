@@ -1,0 +1,36 @@
+@DoctorsManagementSystem_HostAddress = http://localhost:5047
+
+GET {{DoctorsManagementSystem_HostAddress}}/Patients/ HTTP/1.1
+Accept: application/json
+
+###
+GET {{DoctorsManagementSystem_HostAddress}}/Patients/1/ HTTP/1.1
+Accept: application/json
+###
+DELETE  {{DoctorsManagementSystem_HostAddress}}/Patients/1/ HTTP/1.1
+Accept: application/json
+
+###
+PUT {{DoctorsManagementSystem_HostAddress}}/Patients/2
+Content-Type: application/json
+
+{
+    "PatientName": "DAN",
+    "TotalBill": 1200.0 
+}
+###
+POST  {{DoctorsManagementSystem_HostAddress}}/Patients
+Content-Type: application/json
+
+{
+    "PatientName": "Mia",
+    "TotalBill": 1500.0,
+    "Prescriptions": [
+        {
+            "SurgeryName": "Appendectomy",
+            "SurgeryBill": 500.0,
+            "SessionDate": "2026-07-08T00:00:00",
+            "SurgeryNotes": "Patient is stable"
+        }
+    ]
+}
