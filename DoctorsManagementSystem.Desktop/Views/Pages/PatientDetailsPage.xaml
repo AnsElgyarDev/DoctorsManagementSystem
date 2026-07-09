@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:converters="clr-namespace:DoctorsManagementSystem.Desktop.Infrastructure.Converters"
     mc:Ignorable="d"
-    d:DesignHeight="650" d:DesignWidth="1000"
+    d:DesignHeight="800" d:DesignWidth="1000"
     Title="PatientDetailsPage">
 
     <Page.Resources>
@@ -30,38 +30,25 @@
             HorizontalAlignment="Left"
             Margin="0,0,0,16" />
 
-        <Grid
+        <!-- Patient header -->
+        <StackPanel
             Grid.Row="1"
             Margin="0,0,0,16"
             Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Loaded}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="{Binding ViewModel.Patient.PatientName}" FontSize="28" FontWeight="SemiBold" />
-                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                    <ui:SymbolIcon Symbol="Phone24" FontSize="14" Opacity="0.6" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding ViewModel.Patient.PatientPhone}" Margin="6,0,16,0" Opacity="0.75" VerticalAlignment="Center" />
-                    <ui:SymbolIcon Symbol="Mail24" FontSize="14" Opacity="0.6" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding ViewModel.Patient.PatientEmail}" Margin="6,0,16,0" Opacity="0.75" VerticalAlignment="Center" />
-                    <ui:SymbolIcon Symbol="Money24" FontSize="14" Opacity="0.6" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding ViewModel.Patient.TotalBill, StringFormat={}{0:C}}" Margin="6,0,0,0" Opacity="0.75" VerticalAlignment="Center" />
-                </StackPanel>
+            <TextBlock Text="{Binding ViewModel.Patient.PatientName}" FontSize="28" FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                <ui:SymbolIcon Symbol="Phone24" FontSize="14" Opacity="0.6" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding ViewModel.Patient.PatientPhone}" Margin="6,0,16,0" Opacity="0.75" VerticalAlignment="Center" />
+                <ui:SymbolIcon Symbol="Mail24" FontSize="14" Opacity="0.6" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding ViewModel.Patient.PatientEmail}" Margin="6,0,16,0" Opacity="0.75" VerticalAlignment="Center" />
+                <ui:SymbolIcon Symbol="Money24" FontSize="14" Opacity="0.6" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding ViewModel.Patient.TotalBill, StringFormat={}{0:C}}" Margin="6,0,0,0" Opacity="0.75" VerticalAlignment="Center" />
             </StackPanel>
-
-            <ui:Button
-                Grid.Column="1"
-                Content="Add New Prescription"
-                Icon="{ui:SymbolIcon AddCircle24}"
-                Command="{Binding ViewModel.OpenAddPrescriptionDialogCommand}"
-                Appearance="Primary"
-                VerticalAlignment="Center" />
-        </Grid>
+        </StackPanel>
 
         <Grid Grid.Row="2">
 
+            <!-- Loading -->
             <StackPanel
                 Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Loading}"
                 HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -69,6 +56,7 @@
                 <TextBlock Text="Loading patient…" Margin="0,12,0,0" Opacity="0.7" HorizontalAlignment="Center" />
             </StackPanel>
 
+            <!-- Error -->
             <ui:Card
                 Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Error}"
                 HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24" MaxWidth="420">
@@ -80,31 +68,89 @@
                 </StackPanel>
             </ui:Card>
 
-            <Border
+            <!-- Loaded: Prescriptions + Operations, stacked and scrollable -->
+            <ScrollViewer
                 Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Loaded}"
-                CornerRadius="8"
-                BorderThickness="1">
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel>
 
-                <ui:DataGrid
-                    ItemsSource="{Binding ViewModel.Prescriptions}"
-                    AutoGenerateColumns="False"
-                    IsReadOnly="True"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="False"
-                    GridLinesVisibility="Horizontal"
-                    HeadersVisibility="Column"
-                    RowHeight="44"
-                    VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Auto"
-                    Padding="4">
-                    <ui:DataGrid.Columns>
-                        <DataGridTextColumn Header="Surgery / Procedure" Binding="{Binding SurgeryName}" Width="*" />
-                        <DataGridTextColumn Header="Session Date" Binding="{Binding SessionDate, StringFormat=d}" Width="140" />
-                        <DataGridTextColumn Header="Bill" Binding="{Binding SurgeryBill, StringFormat={}{0:C}}" Width="120" />
-                        <DataGridTextColumn Header="Notes" Binding="{Binding SurgeryNotes}" Width="250" />
-                    </ui:DataGrid.Columns>
-                </ui:DataGrid>
-            </Border>
+                    <!-- Prescriptions section -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Prescription History" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <ui:Button
+                            Grid.Column="1"
+                            Content="Add New Prescription"
+                            Icon="{ui:SymbolIcon AddCircle24}"
+                            Command="{Binding ViewModel.OpenAddPrescriptionDialogCommand}"
+                            Appearance="Primary" />
+                    </Grid>
+
+                    <Border CornerRadius="8" BorderThickness="1" Margin="0,0,0,24">
+                        <ui:DataGrid
+                            ItemsSource="{Binding ViewModel.Prescriptions}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            GridLinesVisibility="Horizontal"
+                            HeadersVisibility="Column"
+                            RowHeight="44"
+                            MaxHeight="300"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Auto"
+                            Padding="4">
+                            <ui:DataGrid.Columns>
+                                <DataGridTextColumn Header="Surgery / Procedure" Binding="{Binding SurgeryName}" Width="*" />
+                                <DataGridTextColumn Header="Session Date" Binding="{Binding SessionDate, StringFormat=d}" Width="140" />
+                                <DataGridTextColumn Header="Bill" Binding="{Binding SurgeryBill, StringFormat={}{0:C}}" Width="120" />
+                                <DataGridTextColumn Header="Notes" Binding="{Binding SurgeryNotes}" Width="250" />
+                            </ui:DataGrid.Columns>
+                        </ui:DataGrid>
+                    </Border>
+
+                    <!-- Medical Operations section -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Medical Operations" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <ui:Button
+                            Grid.Column="1"
+                            Content="Add New Operation"
+                            Icon="{ui:SymbolIcon AddCircle24}"
+                            Command="{Binding ViewModel.OpenAddOperationDialogCommand}"
+                            Appearance="Primary" />
+                    </Grid>
+
+                    <Border CornerRadius="8" BorderThickness="1">
+                        <ui:DataGrid
+                            ItemsSource="{Binding ViewModel.Operations}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            GridLinesVisibility="Horizontal"
+                            HeadersVisibility="Column"
+                            RowHeight="44"
+                            MaxHeight="300"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Auto"
+                            Padding="4">
+                            <ui:DataGrid.Columns>
+                                <DataGridTextColumn Header="Operation Name" Binding="{Binding OperationName}" Width="*" />
+                                <DataGridTextColumn Header="Session Date" Binding="{Binding SessionDate, StringFormat=d}" Width="140" />
+                                <DataGridTextColumn Header="Cost" Binding="{Binding OperationCost, StringFormat={}{0:C}}" Width="120" />
+                                <DataGridTextColumn Header="Doctor's Notes" Binding="{Binding Notes}" Width="250" />
+                            </ui:DataGrid.Columns>
+                        </ui:DataGrid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

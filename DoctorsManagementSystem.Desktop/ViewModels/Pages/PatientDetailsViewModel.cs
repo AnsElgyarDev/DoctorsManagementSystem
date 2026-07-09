@@ -44,12 +44,14 @@ public partial class PatientDetailsViewModel : ObservableObject
     private ObservableCollection<PrescriptionSummary> prescriptions = new();
 
     [ObservableProperty]
+    private ObservableCollection<OperationSummary> operations = new();
+
+    [ObservableProperty]
     private PatientDetailsLoadState state = PatientDetailsLoadState.Loading;
 
     [ObservableProperty]
     private string errorMessage = string.Empty;
 
-    /// <summary>Called by PatientDetailsPage right after construction, before loading starts.</summary>
     public void Initialize(int patientId)
     {
         _patientId = patientId;
@@ -65,8 +67,9 @@ public partial class PatientDetailsViewModel : ObservableObject
         {
             var patientTask = _patientApiClient.GetPatientByIdAsync(_patientId);
             var prescriptionsTask = _patientApiClient.GetPatientPrescriptionsAsync(_patientId);
+            var operationsTask = _patientApiClient.GetPatientOperationsAsync(_patientId);
 
-            await Task.WhenAll(patientTask, prescriptionsTask);
+            await Task.WhenAll(patientTask, prescriptionsTask, operationsTask);
 
             Patient = patientTask.Result;
 
@@ -74,6 +77,12 @@ public partial class PatientDetailsViewModel : ObservableObject
             foreach (var prescription in prescriptionsTask.Result)
             {
                 Prescriptions.Add(prescription);
+            }
+
+            Operations.Clear();
+            foreach (var operation in operationsTask.Result)
+            {
+                Operations.Add(operation);
             }
 
             State = PatientDetailsLoadState.Loaded;
@@ -110,13 +119,10 @@ public partial class PatientDetailsViewModel : ObservableObject
         async void OnSaved()
         {
             dialog.Hide();
-            await LoadPatientAsync(); // refresh the prescription list from the server
+            await LoadPatientAsync();
         }
 
-        void OnCancelled()
-        {
-            dialog.Hide();
-        }
+        void OnCancelled() => dialog.Hide();
 
         addPrescriptionViewModel.Saved += OnSaved;
         addPrescriptionViewModel.Cancelled += OnCancelled;
@@ -125,6 +131,38 @@ public partial class PatientDetailsViewModel : ObservableObject
 
         addPrescriptionViewModel.Saved -= OnSaved;
         addPrescriptionViewModel.Cancelled -= OnCancelled;
+    }
+
+    [RelayCommand]
+    private async Task OpenAddOperationDialogAsync()
+    {
+        var addOperationViewModel = _serviceProvider.GetRequiredService<AddOperationViewModel>();
+        addOperationViewModel.Initialize(_patientId);
+
+        var dialogContent = new AddOperationDialogContent(addOperationViewModel);
+
+        var dialog = new ContentDialog
+        {
+            Title = "Add New Medical Operation",
+            Content = dialogContent,
+            CloseButtonText = "Close"
+        };
+
+        async void OnSaved()
+        {
+            dialog.Hide();
+            await LoadPatientAsync();
+        }
+
+        void OnCancelled() => dialog.Hide();
+
+        addOperationViewModel.Saved += OnSaved;
+        addOperationViewModel.Cancelled += OnCancelled;
+
+        await _contentDialogService.ShowAsync(dialog, CancellationToken.None);
+
+        addOperationViewModel.Saved -= OnSaved;
+        addOperationViewModel.Cancelled -= OnCancelled;
     }
 
     [RelayCommand]

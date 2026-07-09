@@ -70,6 +70,7 @@ public partial class App : Application
         services.AddTransient<Views.Pages.PatientDetailsPage>();
         services.AddTransient<ViewModels.Pages.PatientDetailsViewModel>();
         services.AddTransient<ViewModels.Dialogs.AddPrescriptionViewModel>();
+        services.AddTransient<ViewModels.Dialogs.AddOperationViewModel>();
     }
 
 

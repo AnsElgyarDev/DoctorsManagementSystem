@@ -52,3 +52,20 @@ public class PrescriptionSummary
     [JsonPropertyName("sessionDate")]
     public DateTime SessionDate { get; set; }
 }
+public class OperationSummary
+{
+    [JsonPropertyName("operationId")]
+    public int OperationId { get; set; }
+
+    [JsonPropertyName("operationName")]
+    public string OperationName { get; set; } = string.Empty;
+
+    [JsonPropertyName("notes")]
+    public string Notes { get; set; } = string.Empty;
+
+    [JsonPropertyName("operationCost")]
+    public decimal OperationCost { get; set; }
+
+    [JsonPropertyName("sessionDate")]
+    public DateTime SessionDate { get; set; }
+}

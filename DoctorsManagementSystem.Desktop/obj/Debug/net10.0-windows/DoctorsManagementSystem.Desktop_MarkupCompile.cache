@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\App.xaml
-6-1255173825
+711867616
 
-25-1822979719
+27-1065874731
 237-872416887
-Views\Dialogs\AddPatientDialogContent.xaml;Views\Dialogs\AddPrescriptionDialogContent.xaml;Views\MainWindow.xaml;Views\Pages\DashboardPage.xaml;Views\Pages\PatientDetailsPage.xaml;Views\Pages\PatientsPage.xaml;
+Views\Dialogs\AddOperationDialogContent.xaml;Views\Dialogs\AddPatientDialogContent.xaml;Views\Dialogs\AddPrescriptionDialogContent.xaml;Views\MainWindow.xaml;Views\Pages\DashboardPage.xaml;Views\Pages\PatientDetailsPage.xaml;Views\Pages\PatientsPage.xaml;
 
 False
 
