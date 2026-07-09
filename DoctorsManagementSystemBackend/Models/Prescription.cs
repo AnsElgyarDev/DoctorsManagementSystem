@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace DoctorsManagementSystem.model;
 
 public class Prescription
@@ -8,5 +10,6 @@ public class Prescription
     public string SurgeryNotes { get; set; } = string.Empty;
     public decimal SurgeryBill { get; set; }
     public DateTime SessionDate { get; set; }
-    public required Patient patient { get; set; } 
+    [JsonIgnore]
+    public Patient? patient { get; set; } 
 }

@@ -16,21 +16,23 @@ public partial class PatientsViewModel : ObservableObject
 {
     private readonly IPatientApiClient _patientApiClient;
     private readonly ILogger<PatientsViewModel> _logger;
+    private readonly Infrastructure.Navigation.INavigationService _navigationService;
     private readonly IContentDialogService _contentDialogService;
     private readonly IServiceProvider _serviceProvider;
 
-    public PatientsViewModel(
-        IPatientApiClient patientApiClient,
-        ILogger<PatientsViewModel> logger,
-        IContentDialogService contentDialogService,
-        IServiceProvider serviceProvider)
+public PatientsViewModel(
+    IPatientApiClient patientApiClient,
+    ILogger<PatientsViewModel> logger,
+    IContentDialogService contentDialogService,
+    IServiceProvider serviceProvider,
+    Infrastructure.Navigation.INavigationService navigationService)
     {
         _patientApiClient = patientApiClient;
         _logger = logger;
         _contentDialogService = contentDialogService;
         _serviceProvider = serviceProvider;
+        _navigationService = navigationService; 
     }
-
     [ObservableProperty]
     private ObservableCollection<Patient> patients = new();
 
@@ -104,5 +106,11 @@ public partial class PatientsViewModel : ObservableObject
 
         addPatientViewModel.Saved -= OnSaved;
         addPatientViewModel.Cancelled -= OnCancelled;
+    }
+    [RelayCommand]
+    private void OpenPatientDetails(Patient patient)
+    {
+        _navigationService.SetPendingParameter(patient.PatientId);
+        _navigationService.Navigate<Views.Pages.PatientDetailsPage>();
     }
 }

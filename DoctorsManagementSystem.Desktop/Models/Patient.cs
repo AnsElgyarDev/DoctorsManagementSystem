@@ -43,6 +43,9 @@ public class PrescriptionSummary
     [JsonPropertyName("surgeryName")]
     public string SurgeryName { get; set; } = string.Empty;
 
+    [JsonPropertyName("surgeryNotes")]
+    public string SurgeryNotes { get; set; } = string.Empty;
+
     [JsonPropertyName("surgeryBill")]
     public decimal SurgeryBill { get; set; }
 

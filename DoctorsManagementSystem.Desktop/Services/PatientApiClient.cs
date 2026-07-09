@@ -49,16 +49,11 @@ public class PatientApiClient : IPatientApiClient
             var patients = await response.Content.ReadFromJsonAsync<List<Patient>>(_jsonOptions, cancellationToken);
             return patients ?? new List<Patient>();
         }
-        catch (ApiException)
-        {
-            throw;
-        }
+        catch (ApiException) { throw; }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
-            throw new ApiException(
-                "Could not reach the clinic server. Please check that the backend is running and try again.",
-                innerException: ex);
+            throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
         }
         catch (JsonException ex)
         {
@@ -89,26 +84,131 @@ public class PatientApiClient : IPatientApiClient
             var createdPatient = await response.Content.ReadFromJsonAsync<Patient>(_jsonOptions, cancellationToken);
 
             if (createdPatient is null)
-            {
                 throw new ApiException("The patient was created, but the server did not return the record.", (int)response.StatusCode);
-            }
 
             return createdPatient;
         }
-        catch (ApiException)
-        {
-            throw;
-        }
+        catch (ApiException) { throw; }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
-            throw new ApiException(
-                "Could not reach the clinic server. Please check that the backend is running and try again.",
-                innerException: ex);
+            throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
         }
         catch (JsonException ex)
         {
             _logger.LogError(ex, "Failed to parse the create-patient response from the API.");
+            throw new ApiException("The server returned data in an unexpected format.", innerException: ex);
+        }
+        catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogError(ex, "The request to the API timed out.");
+            throw new ApiException("The request timed out. Please check your connection and try again.", innerException: ex);
+        }
+    }
+
+    public async Task<Patient> GetPatientByIdAsync(int patientId, CancellationToken cancellationToken = default)
+    {
+        var endpoint = $"{PatientsEndpoint}/{patientId}";
+
+        try
+        {
+            using var response = await _httpClient.GetAsync(endpoint, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = await ExtractErrorMessageAsync(response, cancellationToken);
+                _logger.LogError("GET {Endpoint} failed with status {StatusCode}: {Message}",
+                    endpoint, (int)response.StatusCode, message);
+                throw new ApiException(message, (int)response.StatusCode);
+            }
+
+            var patient = await response.Content.ReadFromJsonAsync<Patient>(_jsonOptions, cancellationToken);
+
+            if (patient is null)
+                throw new ApiException("The server did not return the patient record.", (int)response.StatusCode);
+
+            return patient;
+        }
+        catch (ApiException) { throw; }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
+            throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Failed to parse the patient response from the API.");
+            throw new ApiException("The server returned data in an unexpected format.", innerException: ex);
+        }
+        catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogError(ex, "The request to the API timed out.");
+            throw new ApiException("The request timed out. Please check your connection and try again.", innerException: ex);
+        }
+    }
+
+    public async Task<IReadOnlyList<PrescriptionSummary>> GetPatientPrescriptionsAsync(int patientId, CancellationToken cancellationToken = default)
+    {
+        var endpoint = $"{PatientsEndpoint}/{patientId}/Prescriptions";
+
+        try
+        {
+            using var response = await _httpClient.GetAsync(endpoint, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = await ExtractErrorMessageAsync(response, cancellationToken);
+                _logger.LogError("GET {Endpoint} failed with status {StatusCode}: {Message}",
+                    endpoint, (int)response.StatusCode, message);
+                throw new ApiException(message, (int)response.StatusCode);
+            }
+
+            var prescriptions = await response.Content.ReadFromJsonAsync<List<PrescriptionSummary>>(_jsonOptions, cancellationToken);
+            return prescriptions ?? new List<PrescriptionSummary>();
+        }
+        catch (ApiException) { throw; }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
+            throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Failed to parse the prescriptions response from the API.");
+            throw new ApiException("The server returned data in an unexpected format.", innerException: ex);
+        }
+        catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogError(ex, "The request to the API timed out.");
+            throw new ApiException("The request timed out. Please check your connection and try again.", innerException: ex);
+        }
+    }
+
+    public async Task AddPrescriptionAsync(int patientId, PrescriptionDto prescriptionDto, CancellationToken cancellationToken = default)
+    {
+        var endpoint = $"{PatientsEndpoint}/{patientId}/Prescriptions";
+
+        try
+        {
+            using var response = await _httpClient.PostAsJsonAsync(endpoint, prescriptionDto, _jsonOptions, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = await ExtractErrorMessageAsync(response, cancellationToken);
+                _logger.LogError("POST {Endpoint} failed with status {StatusCode}: {Message}",
+                    endpoint, (int)response.StatusCode, message);
+                throw new ApiException(message, (int)response.StatusCode);
+            }
+        }
+        catch (ApiException) { throw; }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
+            throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Failed to parse the add-prescription response from the API.");
             throw new ApiException("The server returned data in an unexpected format.", innerException: ex);
         }
         catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
@@ -135,6 +235,7 @@ public class PatientApiClient : IPatientApiClient
         }
         catch (JsonException)
         {
+            // Not ProblemDetails JSON — fall through and use the raw text body.
         }
 
         return body;

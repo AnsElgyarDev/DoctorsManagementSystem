@@ -62,3 +62,7 @@ D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\DoctorsManagementSystem.Desktop.pdb
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\DoctorsManagementSystem.Desktop.genruntimeconfig.cache
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\ref\DoctorsManagementSystem.Desktop.dll
+D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Dialogs\AddPrescriptionDialogContent.g.cs
+D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Pages\PatientDetailsPage.g.cs
+D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Dialogs\AddPrescriptionDialogContent.baml
+D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Pages\PatientDetailsPage.baml
