@@ -633,6 +633,16 @@
         "frameworkReferences": [
           "Microsoft.WindowsDesktop.App.WPF"
         ]
+      },
+      "DoctorsManagementSystem.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/DoctorsManagementSystem.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DoctorsManagementSystem.Shared.dll": {}
+        }
       }
     }
   },
@@ -1603,11 +1613,17 @@
         "wpf-ui.nuspec",
         "wpfui.png"
       ]
+    },
+    "DoctorsManagementSystem.Shared/1.0.0": {
+      "type": "project",
+      "path": "../DoctorsManagementSystem.Shared/DoctorsManagementSystem.Shared.csproj",
+      "msbuildProject": "../DoctorsManagementSystem.Shared/DoctorsManagementSystem.Shared.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0-windows": [
       "CommunityToolkit.Mvvm >= 8.4.2",
+      "DoctorsManagementSystem.Shared >= 1.0.0",
       "Microsoft.Extensions.Hosting >= 10.0.9",
       "Microsoft.Extensions.Http >= 10.0.9",
       "WPF-UI >= 3.0.5"
@@ -1645,7 +1661,11 @@
         "net10.0-windows": {
           "framework": "net10.0-windows7.0",
           "targetAlias": "net10.0-windows",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\Dcotor's Management System\\DoctorsManagementSystem.Shared\\DoctorsManagementSystem.Shared.csproj": {
+              "projectPath": "D:\\Dcotor's Management System\\DoctorsManagementSystem.Shared\\DoctorsManagementSystem.Shared.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

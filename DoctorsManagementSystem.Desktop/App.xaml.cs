@@ -30,6 +30,10 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<Wpf.Ui.IContentDialogService, Wpf.Ui.ContentDialogService>();
+
+        services.AddTransient<ViewModels.Dialogs.AddPatientViewModel>();
+        
         services.AddSingleton(configuration);
 
         var apiBaseUrl = configuration["ApiSettings:BaseUrl"]

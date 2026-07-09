@@ -9,6 +9,7 @@
       "DoctorsManagementSystem.Desktop/1.0.0": {
         "dependencies": {
           "CommunityToolkit.Mvvm": "8.4.2",
+          "DoctorsManagementSystem.Shared": "1.0.0",
           "Microsoft.Extensions.Hosting": "10.0.9",
           "Microsoft.Extensions.Http": "10.0.9",
           "WPF-UI": "3.0.5"
@@ -407,6 +408,14 @@
             "fileVersion": "3.0.5.0"
           }
         }
+      },
+      "DoctorsManagementSystem.Shared/1.0.0": {
+        "runtime": {
+          "DoctorsManagementSystem.Shared.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -625,6 +634,11 @@
       "sha512": "sha512-vha596eFVZ0j/zjpPrYxqaBNZzr17ROOihQ/xqgTVPMx5cmHAVKPulbaUmHKXo0QHGkqvwaPNxYH/HTS/UroTQ==",
       "path": "wpf-ui/3.0.5",
       "hashPath": "wpf-ui.3.0.5.nupkg.sha512"
+    },
+    "DoctorsManagementSystem.Shared/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

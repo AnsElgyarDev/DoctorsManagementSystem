@@ -34,10 +34,13 @@ D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\bin\Debug\net10.0-
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\bin\Debug\net10.0-windows\Microsoft.Extensions.Options.ConfigurationExtensions.dll
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\bin\Debug\net10.0-windows\Microsoft.Extensions.Primitives.dll
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\bin\Debug\net10.0-windows\Wpf.Ui.dll
+D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\bin\Debug\net10.0-windows\DoctorsManagementSystem.Shared.dll
+D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\bin\Debug\net10.0-windows\DoctorsManagementSystem.Shared.pdb
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\DoctorsManagementSystem.Desktop.csproj.AssemblyReference.cache
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\MainWindow.baml
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Pages\DashboardPage.baml
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\App.baml
+D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Dialogs\AddPatientDialogContent.g.cs
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\MainWindow.g.cs
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Pages\DashboardPage.g.cs
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Pages\PatientsPage.g.cs
@@ -45,6 +48,7 @@ D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\GeneratedInternalTypeHelper.g.cs
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\DoctorsManagementSystem.Desktop_MarkupCompile.cache
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\DoctorsManagementSystem.Desktop_MarkupCompile.lref
+D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Dialogs\AddPatientDialogContent.baml
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\Views\Pages\PatientsPage.baml
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\DoctorsManagementSystem.Desktop.g.resources
 D:\Dcotor's Management System\DoctorsManagementSystem.Desktop\obj\Debug\net10.0-windows\DoctorsManagementSystem.Desktop.GeneratedMSBuildEditorConfig.editorconfig

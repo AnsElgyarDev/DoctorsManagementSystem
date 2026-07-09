@@ -20,30 +20,36 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            <!-- Header -->
+    <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="Patients" FontSize="28" FontWeight="SemiBold" />
-                <TextBlock
-                    Text="All registered patients in the clinic"
-                    FontSize="13"
-                    Opacity="0.6"
-                    Margin="0,4,0,0" />
-            </StackPanel>
+        <StackPanel Grid.Column="0">
+            <TextBlock Text="Patients" FontSize="28" FontWeight="SemiBold" />
+            <TextBlock
+                Text="All registered patients in the clinic"
+                FontSize="13"
+                Opacity="0.6"
+                Margin="0,4,0,0" />
+        </StackPanel>
 
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
             <ui:Button
-                Grid.Column="1"
+                Content="Add Patient"
+                Icon="{ui:SymbolIcon PersonAdd24}"
+                Command="{Binding ViewModel.OpenAddPatientDialogCommand}"
+                Appearance="Primary"
+                Margin="0,0,8,0" />
+            <ui:Button
                 Content="Refresh"
                 Icon="{ui:SymbolIcon ArrowClockwise24}"
                 Command="{Binding ViewModel.LoadPatientsCommand}"
-                Appearance="Secondary"
-                VerticalAlignment="Center" />
-        </Grid>
+                Appearance="Secondary" />
+        </StackPanel>
+    </Grid>
 
         <!-- Content area: exactly one panel visible at a time, driven by ViewModel.State -->
         <Grid Grid.Row="1">

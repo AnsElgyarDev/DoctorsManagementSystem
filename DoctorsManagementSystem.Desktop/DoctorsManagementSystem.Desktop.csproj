@@ -21,4 +21,8 @@
   </None>
 </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DoctorsManagementSystem.Shared\DoctorsManagementSystem.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

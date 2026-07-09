@@ -29,5 +29,7 @@
             FooterMenuItemsSource="{Binding ViewModel.FooterMenuItems, Mode=OneWay}"
             IsPaneToggleVisible="True"
             OpenPaneLength="220" />
+            <!-- Dialog host spans the whole window so ContentDialogs overlay everything -->
+    <ContentPresenter x:Name="RootContentDialogPresenter" Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="1000" />
     </Grid>
 </ui:FluentWindow>
