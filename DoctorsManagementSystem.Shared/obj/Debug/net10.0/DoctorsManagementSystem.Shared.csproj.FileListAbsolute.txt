@@ -5,6 +5,7 @@ D:\Dcotor's Management System\DoctorsManagementSystem.Shared\obj\Debug\net10.0\D
 D:\Dcotor's Management System\DoctorsManagementSystem.Shared\obj\Debug\net10.0\DoctorsManagementSystem.Shared.AssemblyInfoInputs.cache
 D:\Dcotor's Management System\DoctorsManagementSystem.Shared\obj\Debug\net10.0\DoctorsManagementSystem.Shared.AssemblyInfo.cs
 D:\Dcotor's Management System\DoctorsManagementSystem.Shared\obj\Debug\net10.0\DoctorsManagementSystem.Shared.csproj.CoreCompileInputs.cache
+D:\Dcotor's Management System\DoctorsManagementSystem.Shared\obj\Debug\net10.0\DoctorsManagementSystem.Shared.sourcelink.json
 D:\Dcotor's Management System\DoctorsManagementSystem.Shared\obj\Debug\net10.0\DoctorsManagementSystem.Shared.dll
 D:\Dcotor's Management System\DoctorsManagementSystem.Shared\obj\Debug\net10.0\refint\DoctorsManagementSystem.Shared.dll
 D:\Dcotor's Management System\DoctorsManagementSystem.Shared\obj\Debug\net10.0\DoctorsManagementSystem.Shared.pdb

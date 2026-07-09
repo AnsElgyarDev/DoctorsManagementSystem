@@ -13,5 +13,13 @@ public partial class PatientsPage : Page
         DataContext = this;
 
         InitializeComponent();
+
+        Loaded += async (_, _) =>
+        {
+            if (ViewModel.LoadPatientsCommand.CanExecute(null))
+            {
+                await ViewModel.LoadPatientsCommand.ExecuteAsync(null);
+            }
+        };
     }
 }

@@ -43,6 +43,11 @@ public partial class App : Application
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         });
 
+        // API clients — Singleton is safe here: PatientApiClient holds no mutable
+        // per-request state, it only pulls a fresh HttpClient from IHttpClientFactory
+        // (which manages connection pooling/lifetime for us) on every call.
+        services.AddSingleton<Services.IPatientApiClient, Services.PatientApiClient>();
+
         // Navigation
         services.AddSingleton<Infrastructure.Navigation.INavigationService,
                             Infrastructure.Navigation.NavigationService>();
@@ -51,8 +56,7 @@ public partial class App : Application
         services.AddSingleton<MainWindow>();
         services.AddSingleton<MainWindowViewModel>();
 
-        // Pages + their ViewModels — Transient, since NavigationView creates
-        // a fresh instance per navigation unless you opt into caching later
+        // Pages + their ViewModels
         services.AddTransient<Views.Pages.DashboardPage>();
         services.AddTransient<ViewModels.Pages.DashboardViewModel>();
 
