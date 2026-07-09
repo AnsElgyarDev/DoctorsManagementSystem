@@ -1,14 +1,17 @@
 using DoctorsManagementSystem.Data;
+using DoctorsManagementSystem.Dto;
 using DoctorsManagementSystem.Endpoints;
 using DoctorsManagementSystem.Middlewares;
+using DoctorsManagementSystem.model;
 using DoctorsManagementSystem.Service;
+using Mapster;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddProblemDetails();
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddScoped<IPatientServices, PatientServices>();
 
 builder.Services.AddCors(options =>

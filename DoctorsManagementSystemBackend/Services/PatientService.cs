@@ -71,19 +71,28 @@ class PatientServices : IPatientServices
     }
 
     public Patient RegisterPatient(PatientDto patientDto)
+{
+    if (patientDto.Prescriptions == null || !patientDto.Prescriptions.Any())
     {
-        if (patientDto.Prescriptions == null || !patientDto.Prescriptions.Any())
-        {
-            throw new ArgumentException("There Must Be Atleast One Prescription!");
-        }
-
-        var patientToAdd = patientDto.Adapt<Patient>();
-
-        _Context.Patients.Add(patientToAdd);
-        _Context.SaveChanges(); 
-
-        return patientToAdd;
+        throw new ArgumentException("There Must Be Atleast One Prescription!");
     }
+
+    var patientToAdd = patientDto.Adapt<Patient>();
+
+    patientToAdd.prescriptions = patientDto.Prescriptions.Select(p => new Prescription
+    {
+        SurgeryName = p.SurgeryName,
+        SurgeryNotes = p.SurgeryNotes,
+        SurgeryBill = p.SurgeryBill,
+        SessionDate = p.SessionDate,
+        patient = patientToAdd
+    }).ToList();
+
+    _Context.Patients.Add(patientToAdd);
+    _Context.SaveChanges(); 
+
+    return patientToAdd;
+}
 
     public bool UpdatePatient(PatientDto patientDto, int PatientId)
     {

@@ -1,6 +1,7 @@
 using DoctorsManagementSystem.Dto;
 using DoctorsManagementSystem.model;
 using DoctorsManagementSystem.Service;
+using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DoctorsManagementSystem.Endpoints;
@@ -43,15 +44,17 @@ public static class PatientEndpoints
         });
 
         // Post Endpoints
-        app.MapPost("/Patients", Results<NotFound<string>, Ok<Patient>> 
+        app.MapPost("/Patients", Results<NotFound<string>, Ok<PatientDto>> 
                    (IPatientServices patientServices, PatientDto patientDto) =>
         {
             var PatientToAdd  = patientServices.RegisterPatient(patientDto);
  
             if(PatientToAdd is null)
                 return TypedResults.NotFound("There are no Data Sent!");
- 
-            return TypedResults.Ok(PatientToAdd);
+            
+            var resultDto = PatientToAdd.Adapt<PatientDto>();
+
+            return TypedResults.Ok(resultDto);
         });
 
         app.MapPost("/Patients/{patientId}/Prescriptions", 
