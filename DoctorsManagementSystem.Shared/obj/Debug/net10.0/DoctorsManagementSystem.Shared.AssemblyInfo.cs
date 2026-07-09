@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DoctorsManagementSystem.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1dc8713ee78b7d6455e306f390c82a274f858aec")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86b43cd9857f9b5cbcb5b4bcc64b169b78b6bc64")]
 [assembly: System.Reflection.AssemblyProductAttribute("DoctorsManagementSystem.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DoctorsManagementSystem.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
