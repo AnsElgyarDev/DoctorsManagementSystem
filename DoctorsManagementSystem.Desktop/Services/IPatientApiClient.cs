@@ -12,4 +12,6 @@ public interface IPatientApiClient
     Task AddPrescriptionAsync(int patientId, PrescriptionDto prescriptionDto, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<OperationSummary>> GetPatientOperationsAsync(int patientId, CancellationToken cancellationToken = default);
     Task AddOperationAsync(int patientId, OperationDto operationDto, CancellationToken cancellationToken = default);
+    Task DeletePatientAsync(int patientId, CancellationToken cancellationToken = default);
+    Task UpdatePatientAsync(int patientId, PatientUpdateDto patientUpdateDto, CancellationToken cancellationToken = default);
 }

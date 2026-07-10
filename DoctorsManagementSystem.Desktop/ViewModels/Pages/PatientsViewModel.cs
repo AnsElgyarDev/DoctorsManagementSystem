@@ -73,40 +73,90 @@ public PatientsViewModel(
             State = PatientsLoadState.Error;
         }
     }
-
     [RelayCommand]
-    private async Task OpenAddPatientDialogAsync()
+private async Task DeletePatientAsync(Patient patient)
+{
+    var confirmDialog = new ContentDialog
     {
-        var addPatientViewModel = _serviceProvider.GetRequiredService<AddPatientViewModel>();
-        var dialogContent = new AddPatientDialogContent(addPatientViewModel);
+        Title = "Delete Patient",
+        Content = $"Are you sure you want to delete {patient.PatientName}? This action cannot be undone.",
+        PrimaryButtonText = "Delete",
+        CloseButtonText = "Cancel"
+    };
 
-        var dialog = new ContentDialog
-        {
-            Title = "Add New Patient",
-            Content = dialogContent,
-            CloseButtonText = "Close"
-        };
+    var result = await _contentDialogService.ShowAsync(confirmDialog, CancellationToken.None);
 
-        void OnSaved(Patient createdPatient)
-        {
-            Patients.Add(createdPatient);
-            State = PatientsLoadState.Loaded;
-            dialog.Hide();
-        }
+    if (result != ContentDialogResult.Primary)
+        return; 
 
-        void OnCancelled()
-        {
-            dialog.Hide();
-        }
+    try
+    {
+        await _patientApiClient.DeletePatientAsync(patient.PatientId);
 
-        addPatientViewModel.Saved += OnSaved;
-        addPatientViewModel.Cancelled += OnCancelled;
+        Patients.Remove(patient);
 
-        await _contentDialogService.ShowAsync(dialog, CancellationToken.None);
-
-        addPatientViewModel.Saved -= OnSaved;
-        addPatientViewModel.Cancelled -= OnCancelled;
+        if (Patients.Count == 0)
+            State = PatientsLoadState.Empty;
     }
+    catch (ApiException ex)
+    {
+        _logger.LogError(ex, "Failed to delete patient {PatientId}.", patient.PatientId);
+        await ShowErrorDialogAsync(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Unexpected error deleting patient {PatientId}.", patient.PatientId);
+        await ShowErrorDialogAsync("Something went wrong while deleting this patient. Please try again.");
+    }
+}
+
+private async Task ShowErrorDialogAsync(string message)
+{
+    var errorDialog = new ContentDialog
+    {
+        Title = "Couldn't Delete Patient",
+        Content = message,
+        CloseButtonText = "OK"
+    };
+    await _contentDialogService.ShowAsync(errorDialog, CancellationToken.None);
+}
+
+[RelayCommand]
+private async Task OpenAddPatientDialogAsync()
+{
+    var addPatientViewModel = _serviceProvider.GetRequiredService<AddPatientViewModel>();
+    addPatientViewModel.InitializeForAdd();
+    
+    await ShowPatientFormDialogAsync(addPatientViewModel);
+}
+
+[RelayCommand]
+private async Task OpenEditPatientDialogAsync(Patient patient)
+{
+    var editPatientViewModel = _serviceProvider.GetRequiredService<AddPatientViewModel>();
+    editPatientViewModel.InitializeForEdit(patient);
+    
+    await ShowPatientFormDialogAsync(editPatientViewModel);
+}
+
+private async Task ShowPatientFormDialogAsync(AddPatientViewModel formViewModel)
+{
+    var dialogContent = new AddPatientDialogContent(formViewModel);
+    var dialog = new ContentDialog { Title = formViewModel.DialogTitle, Content = dialogContent, CloseButtonText = "Close" };
+
+    async void OnSaved() { dialog.Hide(); await LoadPatientsAsync(); }
+    
+    void OnCancelled() => dialog.Hide();
+
+    formViewModel.Saved += OnSaved;
+    formViewModel.Cancelled += OnCancelled;
+    
+    await _contentDialogService.ShowAsync(dialog, CancellationToken.None);
+
+    formViewModel.Saved -= OnSaved;
+    formViewModel.Cancelled -= OnCancelled;
+}
+
     [RelayCommand]
     private void OpenPatientDetails(Patient patient)
     {

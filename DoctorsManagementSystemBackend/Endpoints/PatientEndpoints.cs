@@ -122,11 +122,10 @@ public static class PatientEndpoints
 
         // Update Endpoints
         app.MapPut("/Patients/{PatientId}", Results<BadRequest<string>, NoContent>
-                  (IPatientServices patientServices, PatientDto patientDto, int PatientId) =>
+                (IPatientServices patientServices, PatientUpdateDto patientUpdateDto, int PatientId) =>
         {
-            var isSuccess = patientServices.UpdatePatient(patientDto, PatientId); 
-            if(!isSuccess)
-                return TypedResults.BadRequest("Patient Not Found!");
+            var isSuccess = patientServices.UpdatePatient(patientUpdateDto, PatientId);
+            if (!isSuccess) return TypedResults.BadRequest("Patient Not Found!");
             return TypedResults.NoContent();
         });
 

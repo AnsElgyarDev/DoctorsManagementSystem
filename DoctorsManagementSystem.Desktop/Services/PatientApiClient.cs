@@ -313,4 +313,52 @@ public async Task AddOperationAsync(int patientId, OperationDto operationDto, Ca
         throw new ApiException("The request timed out. Please check your connection and try again.", innerException: ex);
     }
 }
+    public async Task UpdatePatientAsync(int patientId, PatientUpdateDto patientUpdateDto, CancellationToken cancellationToken = default)
+    {
+        var endpoint = $"{PatientsEndpoint}/{patientId}";
+
+        try
+        {
+            using var response = await _httpClient.PutAsJsonAsync(endpoint, patientUpdateDto, _jsonOptions, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = await ExtractErrorMessageAsync(response, cancellationToken);
+                _logger.LogError("PUT {Endpoint} failed with status {StatusCode}: {Message}",
+                    endpoint, (int)response.StatusCode, message);
+                throw new ApiException(message, (int)response.StatusCode);
+            }
+        }
+        catch (ApiException) { throw; }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
+            throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
+        }
+    }
+
+    public async Task DeletePatientAsync(int patientId, CancellationToken cancellationToken = default)
+    {
+        var endpoint = $"{PatientsEndpoint}/{patientId}"; 
+        
+        try
+        {
+            using var response = await _httpClient.DeleteAsync(endpoint, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = await ExtractErrorMessageAsync(response, cancellationToken);
+                _logger.LogError("DELETE {Endpoint} failed with status {StatusCode}: {Message}",
+                    endpoint, (int)response.StatusCode, message);
+                throw new ApiException(message, (int)response.StatusCode);
+            }
+        }
+        catch (ApiException) { throw; }
+        
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
+            throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
+        }
+    }
 }

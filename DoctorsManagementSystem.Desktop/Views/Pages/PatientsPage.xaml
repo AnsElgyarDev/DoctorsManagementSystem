@@ -144,17 +144,33 @@
                         <DataGridTextColumn Header="Email" Binding="{Binding PatientEmail}" Width="220" />
                         <DataGridTextColumn Header="Total Bill" Binding="{Binding TotalBill, StringFormat={}{0:C}}" Width="130" />
                         <DataGridTextColumn Header="Prescriptions" Binding="{Binding Prescriptions.Count}" Width="120" />
-                        <DataGridTemplateColumn Header="" Width="90">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
+                        <DataGridTemplateColumn Header="Actions" Width="250">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
                                     <ui:Button
                                         Content="View"
                                         Appearance="Secondary"
+                                        Margin="0,0,6,0"
                                         Command="{Binding DataContext.ViewModel.OpenPatientDetailsCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
                                         CommandParameter="{Binding}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                                    
+                                    <ui:Button
+                                        Content="Modify"
+                                        Appearance="Caution"
+                                        Margin="0,0,6,0"
+                                        Command="{Binding DataContext.ViewModel.OpenEditPatientDialogCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
+                                        CommandParameter="{Binding}" />
+                                    
+                                    <ui:Button
+                                        Content="Delete"
+                                        Appearance="Danger"
+                                        Command="{Binding DataContext.ViewModel.DeletePatientCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
+                                        CommandParameter="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     </ui:DataGrid.Columns>
                 </ui:DataGrid>
             </Border>

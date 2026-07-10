@@ -112,39 +112,38 @@ class PatientServices : IPatientServices
     }
 
     public Patient RegisterPatient(PatientDto patientDto)
-{
-    if (patientDto.Prescriptions == null || !patientDto.Prescriptions.Any())
     {
-        throw new ArgumentException("There Must Be Atleast One Prescription!");
+        if (patientDto.Prescriptions == null || !patientDto.Prescriptions.Any())
+        {
+            throw new ArgumentException("There Must Be Atleast One Prescription!");
+        }
+
+        var patientToAdd = patientDto.Adapt<Patient>();
+
+        patientToAdd.prescriptions = patientDto.Prescriptions.Select(p => new Prescription
+        {
+            SurgeryName = p.SurgeryName,
+            SurgeryNotes = p.SurgeryNotes,
+            SurgeryBill = p.SurgeryBill,
+            SessionDate = p.SessionDate,
+            patient = patientToAdd
+        }).ToList();
+
+        _Context.Patients.Add(patientToAdd);
+        _Context.SaveChanges(); 
+
+        return patientToAdd;
     }
 
-    var patientToAdd = patientDto.Adapt<Patient>();
-
-    patientToAdd.prescriptions = patientDto.Prescriptions.Select(p => new Prescription
+    public bool UpdatePatient(PatientUpdateDto patientUpdateDto, int PatientId)
     {
-        SurgeryName = p.SurgeryName,
-        SurgeryNotes = p.SurgeryNotes,
-        SurgeryBill = p.SurgeryBill,
-        SessionDate = p.SessionDate,
-        patient = patientToAdd
-    }).ToList();
-
-    _Context.Patients.Add(patientToAdd);
-    _Context.SaveChanges(); 
-
-    return patientToAdd;
-}
-
-    public bool UpdatePatient(PatientDto patientDto, int PatientId)
-    {
-        // checking the User Existance in the DB and Then save the changes in the DB
-        var USerToUpdate = _Context.Patients.Find(PatientId);
-        if(USerToUpdate is null)
+        var patientToUpdate = _Context.Patients.Find(PatientId);
+        if (patientToUpdate is null)
             return false;
-        
-        patientDto.Adapt(USerToUpdate);
+
+        patientUpdateDto.Adapt(patientToUpdate); 
         _Context.SaveChanges();
-        
+
         return true;
     }
 

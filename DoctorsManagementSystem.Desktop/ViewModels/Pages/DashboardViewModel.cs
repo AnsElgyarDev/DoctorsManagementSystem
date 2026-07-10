@@ -71,31 +71,21 @@ public partial class DashboardViewModel : ObservableObject
             State = DashboardLoadState.Error;
         }
     }
-
     [RelayCommand]
     private async Task OpenAddPatientDialogAsync()
     {
         var addPatientViewModel = _serviceProvider.GetRequiredService<AddPatientViewModel>();
+        addPatientViewModel.InitializeForAdd();
+        
         var dialogContent = new AddPatientDialogContent(addPatientViewModel);
+        var dialog = new ContentDialog { Title = addPatientViewModel.DialogTitle, Content = dialogContent, CloseButtonText = "Close" };
 
-        var dialog = new ContentDialog
-        {
-            Title = "Add New Patient",
-            Content = dialogContent,
-            CloseButtonText = "Close"
-        };
-
-        async void OnSaved(Patient createdPatient)
-        {
-            dialog.Hide();
-            await LoadDashboardAsync(); // reflect the new patient in stats + recent list
-        }
-
+        async void OnSaved() { dialog.Hide(); await LoadDashboardAsync(); }
         void OnCancelled() => dialog.Hide();
 
         addPatientViewModel.Saved += OnSaved;
         addPatientViewModel.Cancelled += OnCancelled;
-
+        
         await _contentDialogService.ShowAsync(dialog, CancellationToken.None);
 
         addPatientViewModel.Saved -= OnSaved;

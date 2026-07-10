@@ -14,9 +14,8 @@
         <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="500">
-        <StackPanel Width="400" Margin="0,0,10,0">
-
+    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="500">
+        <StackPanel Width="420">
             <TextBlock Text="Patient Details" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,8" />
 
             <TextBlock Text="Full Name" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
@@ -31,59 +30,31 @@
             <TextBlock Text="Total Bill" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
             <ui:TextBox Text="{Binding TotalBill, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Separator Margin="0,16,0,12" />
+            <!-- قسم الروشتة: سيختفي تماماً أثناء التعديل ويظهر في الإضافة فقط -->
+            <StackPanel Visibility="{Binding ShowPrescriptionSection, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Separator Margin="0,16,0,12" />
+                <TextBlock Text="First Prescription (required)" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,8" />
+                <TextBlock Text="Surgery / Procedure Name" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
+                <ui:TextBox PlaceholderText="e.g. Appendectomy" Text="{Binding SurgeryName, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="Notes" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
+                <ui:TextBox PlaceholderText="Optional notes" Text="{Binding SurgeryNotes, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" Height="60" />
+                <TextBlock Text="Surgery Bill" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
+                <ui:TextBox Text="{Binding SurgeryBill, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="Session Date" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
+                <DatePicker SelectedDate="{Binding SessionDate}" />
+            </StackPanel>
 
-            <TextBlock Text="First Prescription (required)" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,8" />
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource SystemFillColorCriticalBrush}" TextWrapping="Wrap" Margin="0,12,0,0" Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
 
-            <TextBlock Text="Surgery / Procedure Name" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
-            <ui:TextBox PlaceholderText="e.g. Appendectomy" Text="{Binding SurgeryName, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="Notes" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
-            <ui:TextBox
-                PlaceholderText="Optional notes"
-                Text="{Binding SurgeryNotes, UpdateSourceTrigger=PropertyChanged}"
-                AcceptsReturn="True"
-                TextWrapping="Wrap"
-                Height="60" />
-
-            <TextBlock Text="Surgery Bill" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
-            <ui:TextBox Text="{Binding SurgeryBill, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="Session Date" FontSize="12" Opacity="0.7" Margin="0,8,0,4" />
-            <DatePicker SelectedDate="{Binding SessionDate}" />
-
-            <TextBlock
-                Text="{Binding ErrorMessage}"
-                Foreground="{DynamicResource SystemFillColorCriticalBrush}"
-                TextWrapping="Wrap"
-                Margin="0,12,0,0"
-                Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
-
-            <Grid Margin="0,20,0,10">
+            <Grid Margin="0,20,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
-                <ui:ProgressRing
-                    Grid.Column="0"
-                    IsIndeterminate="True"
-                    Width="20" Height="20"
-                    HorizontalAlignment="Left"
-                    Visibility="{Binding IsSaving, Converter={StaticResource BoolToVisibilityConverter}}" />
-
-                <ui:Button
-                    Grid.Column="1"
-                    Content="Cancel"
-                    Command="{Binding CancelCommand}"
-                    Margin="0,0,8,0"
-                    Appearance="Secondary" />
-                <ui:Button
-                    Grid.Column="2"
-                    Content="Save Patient"
-                    Command="{Binding SaveCommand}"
-                    Appearance="Primary" />
+                <ui:ProgressRing Grid.Column="0" IsIndeterminate="True" Width="20" Height="20" HorizontalAlignment="Left" Visibility="{Binding IsSaving, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <ui:Button Grid.Column="1" Content="Cancel" Command="{Binding CancelCommand}" Margin="0,0,8,0" Appearance="Secondary" />
+                <ui:Button Grid.Column="2" Content="{Binding SaveButtonText}" Command="{Binding SaveCommand}" Appearance="Primary" />
             </Grid>
         </StackPanel>
     </ScrollViewer>
