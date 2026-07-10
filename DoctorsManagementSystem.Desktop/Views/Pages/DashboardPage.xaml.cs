@@ -13,5 +13,13 @@ public partial class DashboardPage : Page
         DataContext = this;
 
         InitializeComponent();
+
+        Loaded += async (_, _) =>
+        {
+            if (ViewModel.LoadDashboardCommand.CanExecute(null))
+            {
+                await ViewModel.LoadDashboardCommand.ExecuteAsync(null);
+            }
+        };
     }
 }

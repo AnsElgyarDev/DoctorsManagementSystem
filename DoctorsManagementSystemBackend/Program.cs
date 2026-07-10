@@ -11,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddProblemDetails();
-    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddScoped<IDashboardServices, DashboardServices>();   
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddScoped<IPatientServices, PatientServices>();
 
 builder.Services.AddCors(options =>
@@ -40,4 +41,5 @@ app.UseExceptionHandler();
 app.UseMiddleware<RequestLogMiddleware>();  
 
 app.UsePatientEndpoints();
+app.UseDashboardEndpoints();
 app.Run();

@@ -5,16 +5,158 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:converters="clr-namespace:DoctorsManagementSystem.Desktop.Infrastructure.Converters"
     mc:Ignorable="d"
-    d:DesignHeight="450" d:DesignWidth="800"
+    d:DesignHeight="700" d:DesignWidth="1000"
     Title="DashboardPage">
 
-    <Grid>
-        <TextBlock
-            Text="{Binding ViewModel.Greeting, Mode=OneWay}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            FontSize="18"
-            Opacity="0.8" />
+    <Page.Resources>
+        <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
+    </Page.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Dashboard" FontSize="28" FontWeight="SemiBold" />
+                <TextBlock Text="Overview of your clinic" FontSize="13" Opacity="0.6" Margin="0,4,0,0" />
+            </StackPanel>
+
+            <ui:Button
+                Grid.Column="1"
+                Content="Register New Patient"
+                Icon="{ui:SymbolIcon PersonAdd24}"
+                Command="{Binding ViewModel.OpenAddPatientDialogCommand}"
+                Appearance="Primary"
+                VerticalAlignment="Center" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+
+            <!-- Loading -->
+            <StackPanel
+                Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Loading}"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ui:ProgressRing IsIndeterminate="True" Width="42" Height="42" />
+                <TextBlock Text="Loading dashboard…" Margin="0,12,0,0" Opacity="0.7" HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <!-- Error -->
+            <ui:Card
+                Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Error}"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24" MaxWidth="420">
+                <StackPanel HorizontalAlignment="Center">
+                    <ui:SymbolIcon Symbol="ErrorCircle24" FontSize="32" HorizontalAlignment="Center" />
+                    <TextBlock Text="Couldn't load the dashboard" FontSize="16" FontWeight="SemiBold" Margin="0,12,0,4" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding ViewModel.ErrorMessage}" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.75" />
+                    <ui:Button Content="Try Again" Command="{Binding ViewModel.LoadDashboardCommand}" Margin="0,16,0,0" HorizontalAlignment="Center" Appearance="Primary" />
+                </StackPanel>
+            </ui:Card>
+
+            <!-- Loaded -->
+            <ScrollViewer
+                Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Loaded}"
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+
+                    <!-- Stat cards -->
+                    <Grid Margin="0,0,0,24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <ui:Card Grid.Column="0" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    Grid.Column="0"
+                                    Width="48" Height="48"
+                                    CornerRadius="24"
+                                    Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                    Margin="0,0,16,0">
+                                    <ui:SymbolIcon
+                                        Symbol="People24"
+                                        FontSize="22"
+                                        Foreground="White"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Total Patients" FontSize="13" Opacity="0.65" />
+                                    <TextBlock Text="{Binding ViewModel.TotalPatients}" FontSize="26" FontWeight="SemiBold" />
+                                </StackPanel>
+                            </Grid>
+                        </ui:Card>
+
+                        <ui:Card Grid.Column="2" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    Grid.Column="0"
+                                    Width="48" Height="48"
+                                    CornerRadius="24"
+                                    Background="{DynamicResource SystemFillColorSuccessBrush}"
+                                    Margin="0,0,16,0">
+                                    <ui:SymbolIcon
+                                        Symbol="Money24"
+                                        FontSize="22"
+                                        Foreground="White"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Total Revenue" FontSize="13" Opacity="0.65" />
+                                    <TextBlock Text="{Binding ViewModel.TotalRevenue, StringFormat={}{0:C}}" FontSize="26" FontWeight="SemiBold" />
+                                </StackPanel>
+                            </Grid>
+                        </ui:Card>
+                    </Grid>
+
+                    <!-- Recent patients -->
+                    <TextBlock Text="Recent Patients" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+                    <Border CornerRadius="8" BorderThickness="1">
+                        <ui:DataGrid
+                            ItemsSource="{Binding ViewModel.RecentPatients}"
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            GridLinesVisibility="Horizontal"
+                            HeadersVisibility="Column"
+                            RowHeight="44"
+                            MaxHeight="320"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Auto"
+                            Padding="4">
+                            <ui:DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding PatientId}" Width="70" />
+                                <DataGridTextColumn Header="Name" Binding="{Binding PatientName}" Width="*" />
+                                <DataGridTextColumn Header="Phone" Binding="{Binding PatientPhone}" Width="150" />
+                                <DataGridTextColumn Header="Total Bill" Binding="{Binding TotalBill, StringFormat={}{0:C}}" Width="130" />
+                            </ui:DataGrid.Columns>
+                        </ui:DataGrid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>
