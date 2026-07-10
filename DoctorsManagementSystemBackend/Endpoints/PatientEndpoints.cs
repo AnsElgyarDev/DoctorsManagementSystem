@@ -1,8 +1,10 @@
+using DoctorsManagementSystem.Data;
 using DoctorsManagementSystem.Dto;
 using DoctorsManagementSystem.model;
 using DoctorsManagementSystem.Service;
 using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoctorsManagementSystem.Endpoints;
 
@@ -43,6 +45,32 @@ public static class PatientEndpoints
             return TypedResults.Ok(PrescriptionsToReturn);
         });
 
+        app.MapGet("/Patient/{PatientId}/Operations", Results<NotFound<string>, Ok<ICollection<Prescription>>>
+                  (int PatientId, AppDbContext context) =>
+        {
+            var patient= context.Patients
+                                        .Include(patient => patient.prescriptions)
+                                        .FirstOrDefault(patient => patient.PatientId == PatientId);
+            
+            if(patient is null)
+                return TypedResults.NotFound("pateint Not Found!");
+            
+            return TypedResults.Ok(patient.prescriptions);
+        });
+
+        app.MapGet("/Patients/{patientId:int}/Operations", async Task<Results<NotFound<string>, Ok<List<OperationDto>>>> 
+                  (int patientId, IPatientServices patientServices) =>
+        {
+            var operations = await patientServices.GetPatientOperationsAsync(patientId);
+
+            if (operations is null)
+                return TypedResults.NotFound("Patient not found or has no operations.");
+
+            var result = operations.Adapt<List<OperationDto>>();
+
+            return TypedResults.Ok(result);
+        });
+
         // Post Endpoints
         app.MapPost("/Patients", Results<NotFound<string>, Ok<PatientDto>> 
                    (IPatientServices patientServices, PatientDto patientDto) =>
@@ -64,6 +92,21 @@ public static class PatientEndpoints
             
             return TypedResults.Ok(presciptionToAdd);    
         });
+
+        app.MapPost("/Patients/{patientId:int}/Operations", async Task<Results<NotFound<string>, BadRequest<string>, Ok>> 
+                   (int patientId, OperationDto operationDto, IPatientServices patientServices) =>
+        {
+            if (operationDto is null)
+                return TypedResults.BadRequest("There are no Data Sent!");
+
+            var isAdded = await patientServices.AddOperationAsync(patientId, operationDto);
+
+            if (!isAdded)
+                return TypedResults.NotFound("Patient not found to link this operation.");
+
+            return TypedResults.Ok();
+        }
+        );
 
         // Delete Endpoints
         app.MapDelete("/Patients/{PatientId}", Results<BadRequest<string>, Ok<string>>

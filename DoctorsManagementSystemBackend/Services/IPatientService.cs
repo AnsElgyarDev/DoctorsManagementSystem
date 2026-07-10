@@ -13,4 +13,6 @@ public interface IPatientServices
     bool DeletePatient(int PatientId);
     bool UpdatePatient(PatientDto patientDto, int PatientId);
     PrescriptionDto UpdatePatientPrescription(int PatientId, int prescriptionId, PrescriptionDto prescriptionDto);
+    Task<List<Operation>?> GetPatientOperationsAsync(int patientId);
+    Task<bool> AddOperationAsync(int patientId, OperationDto operationDto);
 }

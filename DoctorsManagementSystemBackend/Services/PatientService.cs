@@ -49,6 +49,47 @@ class PatientServices : IPatientServices
 
     public IEnumerable<Patient> GetAllPatients() => _Context.Patients;
 
+    public async Task<List<Operation>?> GetPatientOperationsAsync(int patientId)
+    {
+        var patientExists = await _Context.Patients.AnyAsync(p => p.PatientId == patientId);
+        if (!patientExists)
+        {
+            return null; 
+        }
+
+        return await _Context.Operations
+            .Where(o => o.PatientId == patientId)
+            .OrderByDescending(o => o.SessionDate)
+            .ToListAsync();
+    }
+
+    public async Task<bool> AddOperationAsync(int patientId, OperationDto operationDto)
+    {
+        var patient = await _Context.Patients.FindAsync(patientId);
+        if (patient == null)
+        {
+            return false; 
+        }
+
+        var operation = new Operation
+        {
+            PatientId = patientId,
+            OperationName = operationDto.OperationName,
+            Notes = operationDto.Notes,
+            OperationCost = operationDto.OperationCost,
+            SessionDate = operationDto.SessionDate
+        };
+
+        _Context.Operations.Add(operation);
+
+        patient.TotalBill += operationDto.OperationCost;
+
+        await _Context.SaveChangesAsync();
+
+        return true;
+    }
+
+
     public Patient? GetPatientsById(int PatientId)
     {
         var UserToReturn = _Context.Patients.Find(PatientId);
