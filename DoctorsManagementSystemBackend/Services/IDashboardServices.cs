@@ -1,4 +1,5 @@
 using DoctorsManagementSystem.Dto;
+using DoctorsManagementSystem.Shared.Dtos;
 
 namespace DoctorsManagementSystem.Service;
 

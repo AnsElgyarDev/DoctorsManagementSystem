@@ -1,6 +1,7 @@
 using DoctorsManagementSystem.Service;
 using DoctorsManagementSystem.Dto;
 using Microsoft.AspNetCore.Http.HttpResults;
+using DoctorsManagementSystem.Shared.Dtos;
 
 namespace DoctorsManagementSystem.Endpoints;
 

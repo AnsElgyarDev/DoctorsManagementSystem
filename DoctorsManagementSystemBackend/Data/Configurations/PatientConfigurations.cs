@@ -17,5 +17,8 @@ class PatientConfigurations : IEntityTypeConfiguration<Patient>
         builder.Property(x => x.TotalBill).
         HasDefaultValue(0).
         HasPrecision(10, 2);
+    
+        builder.Property(p => p.RegisteredAt)
+        .HasDefaultValueSql("GETUTCDATE()");
     }
 }

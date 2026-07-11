@@ -4,17 +4,20 @@ namespace DoctorsManagementSystem.Desktop.Models;
 
 public class DashboardStats
 {
-    [JsonPropertyName("totalPatients")]
-    public int TotalPatients { get; set; }
+    [JsonPropertyName("todayAppointmentsCount")]
+    public int TodayAppointmentsCount { get; set; }
 
-    [JsonPropertyName("totalRevenue")]
-    public decimal TotalRevenue { get; set; }
+    [JsonPropertyName("monthlyRevenue")]
+    public decimal MonthlyRevenue { get; set; }
 
-    [JsonPropertyName("recentPatients")]
-    public List<RecentPatient> RecentPatients { get; set; } = new();
+    [JsonPropertyName("upcomingOperationsCount")]
+    public int UpcomingOperationsCount { get; set; }
+
+    [JsonPropertyName("latestPatients")]
+    public List<LatestPatient> LatestPatients { get; set; } = new();
 }
 
-public class RecentPatient
+public class LatestPatient
 {
     [JsonPropertyName("patientId")]
     public int PatientId { get; set; }
@@ -25,6 +28,6 @@ public class RecentPatient
     [JsonPropertyName("patientPhone")]
     public string PatientPhone { get; set; } = string.Empty;
 
-    [JsonPropertyName("totalBill")]
-    public decimal TotalBill { get; set; }
+    [JsonPropertyName("registeredAt")]
+    public DateTime RegisteredAt { get; set; }
 }

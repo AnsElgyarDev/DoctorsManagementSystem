@@ -119,7 +119,8 @@ class PatientServices : IPatientServices
         }
 
         var patientToAdd = patientDto.Adapt<Patient>();
-
+        patientToAdd.RegisteredAt = DateTime.UtcNow;
+        
         patientToAdd.prescriptions = patientDto.Prescriptions.Select(p => new Prescription
         {
             SurgeryName = p.SurgeryName,

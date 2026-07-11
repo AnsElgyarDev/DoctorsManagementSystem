@@ -1,16 +1,17 @@
-namespace DoctorsManagementSystem.Dto;
+namespace DoctorsManagementSystem.Shared.Dtos;
 
 public record DashboardStatsDto
 {
-    public int TotalPatients { get; init; }
-    public decimal TotalRevenue { get; init; }
-    public List<RecentPatientDto> RecentPatients { get; init; } = new();
+    public int TodayAppointmentsCount { get; init; }
+    public decimal MonthlyRevenue { get; init; }
+    public int UpcomingOperationsCount { get; init; }
+    public List<LatestPatientDto> LatestPatients { get; init; } = new();
 }
 
-public record RecentPatientDto
+public record LatestPatientDto
 {
     public int PatientId { get; init; }
     public string PatientName { get; init; } = string.Empty;
     public string PatientPhone { get; init; } = string.Empty;
-    public decimal TotalBill { get; init; }
+    public DateTime RegisteredAt { get; init; }
 }

@@ -10,4 +10,5 @@ public class Patient
     public string PatientEmail { get; set; } = "anselgyar012@gmail.com";
     public string PatientPhone { get; set; } = "0123456789";
     public ICollection<Prescription> prescriptions { get; set; } = new List<Prescription>();
+    public DateTime RegisteredAt { get; set; }   
 }

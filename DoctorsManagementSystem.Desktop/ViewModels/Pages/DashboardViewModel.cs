@@ -31,9 +31,10 @@ public partial class DashboardViewModel : ObservableObject
         _serviceProvider = serviceProvider;
     }
 
-    [ObservableProperty] private int totalPatients;
-    [ObservableProperty] private decimal totalRevenue;
-    [ObservableProperty] private ObservableCollection<RecentPatient> recentPatients = new();
+    [ObservableProperty] private int todayAppointmentsCount;
+    [ObservableProperty] private decimal monthlyRevenue;
+    [ObservableProperty] private int upcomingOperationsCount;
+    [ObservableProperty] private ObservableCollection<LatestPatient> latestPatients = new();
     [ObservableProperty] private DashboardLoadState state = DashboardLoadState.Loading;
     [ObservableProperty] private string errorMessage = string.Empty;
 
@@ -47,13 +48,14 @@ public partial class DashboardViewModel : ObservableObject
         {
             var stats = await _dashboardApiClient.GetDashboardStatsAsync();
 
-            TotalPatients = stats.TotalPatients;
-            TotalRevenue = stats.TotalRevenue;
+            TodayAppointmentsCount = stats.TodayAppointmentsCount;
+            MonthlyRevenue = stats.MonthlyRevenue;
+            UpcomingOperationsCount = stats.UpcomingOperationsCount;
 
-            RecentPatients.Clear();
-            foreach (var patient in stats.RecentPatients)
+            LatestPatients.Clear();
+            foreach (var patient in stats.LatestPatients)
             {
-                RecentPatients.Add(patient);
+                LatestPatients.Add(patient);
             }
 
             State = DashboardLoadState.Loaded;
@@ -71,21 +73,33 @@ public partial class DashboardViewModel : ObservableObject
             State = DashboardLoadState.Error;
         }
     }
+
     [RelayCommand]
     private async Task OpenAddPatientDialogAsync()
     {
         var addPatientViewModel = _serviceProvider.GetRequiredService<AddPatientViewModel>();
         addPatientViewModel.InitializeForAdd();
-        
-        var dialogContent = new AddPatientDialogContent(addPatientViewModel);
-        var dialog = new ContentDialog { Title = addPatientViewModel.DialogTitle, Content = dialogContent, CloseButtonText = "Close" };
 
-        async void OnSaved() { dialog.Hide(); await LoadDashboardAsync(); }
+        var dialogContent = new AddPatientDialogContent(addPatientViewModel);
+
+        var dialog = new ContentDialog
+        {
+            Title = addPatientViewModel.DialogTitle,
+            Content = dialogContent,
+            CloseButtonText = "Close"
+        };
+
+        async void OnSaved()
+        {
+            dialog.Hide();
+            await LoadDashboardAsync();
+        }
+
         void OnCancelled() => dialog.Hide();
 
         addPatientViewModel.Saved += OnSaved;
         addPatientViewModel.Cancelled += OnCancelled;
-        
+
         await _contentDialogService.ShowAsync(dialog, CancellationToken.None);
 
         addPatientViewModel.Saved -= OnSaved;

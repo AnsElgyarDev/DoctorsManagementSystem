@@ -1,5 +1,5 @@
 using DoctorsManagementSystem.Data;
-using DoctorsManagementSystem.Dto;
+using DoctorsManagementSystem.Shared.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace DoctorsManagementSystem.Service;
@@ -15,28 +15,44 @@ class DashboardServices : IDashboardServices
 
     public DashboardStatsDto GetDashboardStats()
     {
-        var totalPatients = _Context.Patients.Count();
-        var totalRevenue = _Context.Patients.Sum(p => (decimal?)p.TotalBill) ?? 0m;
+        var today = DateTime.Today;
+        var monthStart = new DateTime(today.Year, today.Month, 1);
+        var monthEnd = monthStart.AddMonths(1);
 
-        // No CreatedAt/RegisteredAt column exists on Patient yet, so "recent" is
-        // approximated by PatientId descending (higher ID = registered later).
-        var recentPatients = _Context.Patients
-            .OrderByDescending(p => p.PatientId)
+        var todayAppointmentsCount = _Context.Prescriptions
+            .Count(p => p.SessionDate.Date == today);
+
+        var upcomingOperationsCount = _Context.Operations
+            .Count(o => o.SessionDate.Date >= today);
+
+        var prescriptionRevenue = _Context.Prescriptions
+            .Where(p => p.SessionDate >= monthStart && p.SessionDate < monthEnd)
+            .Sum(p => (decimal?)p.SurgeryBill) ?? 0m;
+
+        var operationRevenue = _Context.Operations
+            .Where(o => o.SessionDate >= monthStart && o.SessionDate < monthEnd)
+            .Sum(o => (decimal?)o.OperationCost) ?? 0m;
+
+        var monthlyRevenue = prescriptionRevenue + operationRevenue;
+
+        var latestPatients = _Context.Patients
+            .OrderByDescending(p => p.RegisteredAt)
             .Take(5)
-            .Select(p => new RecentPatientDto
+            .Select(p => new LatestPatientDto
             {
                 PatientId = p.PatientId,
                 PatientName = p.PatientName,
                 PatientPhone = p.PatientPhone,
-                TotalBill = p.TotalBill
+                RegisteredAt = p.RegisteredAt
             })
             .ToList();
 
         return new DashboardStatsDto
         {
-            TotalPatients = totalPatients,
-            TotalRevenue = totalRevenue,
-            RecentPatients = recentPatients
+            TodayAppointmentsCount = todayAppointmentsCount,
+            MonthlyRevenue = monthlyRevenue,
+            UpcomingOperationsCount = upcomingOperationsCount,
+            LatestPatients = latestPatients
         };
     }
 }
