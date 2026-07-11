@@ -12,6 +12,7 @@
 
     <Page.Resources>
         <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
     </Page.Resources>
 
     <Grid Margin="24">
@@ -21,14 +22,28 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:Button
-            Grid.Row="0"
-            Content="Back to Patients"
-            Icon="{ui:SymbolIcon ArrowLeft24}"
-            Command="{Binding ViewModel.GoBackCommand}"
-            Appearance="Secondary"
-            HorizontalAlignment="Left"
-            Margin="0,0,0,16" />
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ui:Button
+                Grid.Column="0"
+                Content="Back to Patients"
+                Icon="{ui:SymbolIcon ArrowLeft24}"
+                Command="{Binding ViewModel.GoBackCommand}"
+                Appearance="Secondary"
+                HorizontalAlignment="Left" />
+
+            <ui:Button
+                Grid.Column="1"
+                Content="Export Formal PDF"
+                Icon="{ui:SymbolIcon DocumentPdf24}"
+                Command="{Binding ViewModel.ExportPdfCommand}"
+                Appearance="Secondary"
+                IsEnabled="{Binding ViewModel.IsExporting, Converter={StaticResource InverseBoolConverter}}" />
+        </Grid>
 
         <!-- Patient header -->
         <StackPanel

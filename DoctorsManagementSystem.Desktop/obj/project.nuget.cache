@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "76UtiOEZsYg=",
+  "dgSpecHash": "/QyegtWdxSM=",
   "success": true,
   "projectFilePath": "D:\\Dcotor's Management System\\DoctorsManagementSystem.Desktop\\DoctorsManagementSystem.Desktop.csproj",
   "expectedPackageFiles": [
@@ -33,6 +33,7 @@
     "C:\\Users\\DELL\\.nuget\\packages\\microsoft.extensions.options\\10.0.9\\microsoft.extensions.options.10.0.9.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\10.0.9\\microsoft.extensions.options.configurationextensions.10.0.9.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.9\\microsoft.extensions.primitives.10.0.9.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\questpdf\\2026.7.0\\questpdf.2026.7.0.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\wpf-ui\\3.0.5\\wpf-ui.3.0.5.nupkg.sha512"
   ],
   "logs": []

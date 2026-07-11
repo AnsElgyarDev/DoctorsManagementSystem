@@ -9,6 +9,7 @@ using DoctorsManagementSystem.Desktop.Views.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wpf.Ui;
+using System.IO;
 using Wpf.Ui.Controls;
 
 namespace DoctorsManagementSystem.Desktop.ViewModels.Pages;
@@ -20,19 +21,28 @@ public partial class PatientDetailsViewModel : ObservableObject
     private readonly IContentDialogService _contentDialogService;
     private readonly IServiceProvider _serviceProvider;
     private readonly Infrastructure.Navigation.INavigationService _navigationService;
+    
+    // 1. الحقول الجديدة الخاصة بـ الفايل ديايلوج وتوليد الـ PDF
+    private readonly Infrastructure.Dialogs.IFileDialogService _fileDialogService;
+    private readonly IPatientPdfExportService _patientPdfExportService;
 
+    // 2. الـ Constructor المحدث بعد حقن الخدمات الجديدة
     public PatientDetailsViewModel(
         IPatientApiClient patientApiClient,
         ILogger<PatientDetailsViewModel> logger,
         IContentDialogService contentDialogService,
         IServiceProvider serviceProvider,
-        Infrastructure.Navigation.INavigationService navigationService)
+        Infrastructure.Navigation.INavigationService navigationService,
+        Infrastructure.Dialogs.IFileDialogService fileDialogService,     
+        IPatientPdfExportService patientPdfExportService)                
     {
         _patientApiClient = patientApiClient;
         _logger = logger;
         _contentDialogService = contentDialogService;
         _serviceProvider = serviceProvider;
         _navigationService = navigationService;
+        _fileDialogService = fileDialogService;                          
+        _patientPdfExportService = patientPdfExportService;               
     }
 
     private int _patientId;
@@ -51,6 +61,10 @@ public partial class PatientDetailsViewModel : ObservableObject
 
     [ObservableProperty]
     private string errorMessage = string.Empty;
+
+    // 3. خاصية مراقبة حالة التصدير لتعطيل/تفعيل الزرار في الـ UI
+    [ObservableProperty]
+    private bool isExporting;
 
     public void Initialize(int patientId)
     {
@@ -169,5 +183,57 @@ public partial class PatientDetailsViewModel : ObservableObject
     private void GoBack()
     {
         _navigationService.Navigate<Views.Pages.PatientsPage>();
+    }
+
+    // 4. ميثود الأمر (Command) المسؤول عن تشغيل عملية التصدير وحفظ الملف
+    [RelayCommand]
+    private async Task ExportPdfAsync()
+    {
+        if (Patient is null)
+            return;
+
+        var defaultFileName = $"{Patient.PatientName.Replace(' ', '_')}_MedicalRecord.pdf";
+        
+        var filePath = _fileDialogService.ShowSaveFileDialog(
+            defaultFileName,
+            "PDF Document (*.pdf)|*.pdf",
+            "Export Patient Record");
+
+        if (string.IsNullOrEmpty(filePath))
+            return; 
+
+        IsExporting = true; 
+
+        try
+        {
+            var pdfBytes = _patientPdfExportService.GeneratePatientReport(
+                Patient, Prescriptions.ToList(), Operations.ToList());
+
+            await File.WriteAllBytesAsync(filePath, pdfBytes);
+
+            var confirmDialog = new ContentDialog
+            {
+                Title = "Export Complete",
+                Content = $"The patient record was saved to:\n{filePath}",
+                CloseButtonText = "OK"
+            };
+            await _contentDialogService.ShowAsync(confirmDialog, CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to export PDF for patient {PatientId}.", _patientId);
+
+            var errorDialog = new ContentDialog
+            {
+                Title = "Export Failed",
+                Content = "Something went wrong while generating the PDF. Please try again.",
+                CloseButtonText = "OK"
+            };
+            await _contentDialogService.ShowAsync(errorDialog, CancellationToken.None);
+        }
+        finally
+        {
+            IsExporting = false; 
+        }
     }
 }

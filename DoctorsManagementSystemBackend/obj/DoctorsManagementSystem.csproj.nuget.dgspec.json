@@ -423,6 +423,10 @@
               "target": "Package",
               "version": "[11.0.0-preview.5.26302.115, )"
             },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2026.7.0, )"
+            },
             "Scalar.AspNetCore": {
               "target": "Package",
               "version": "[2.16.11, )"

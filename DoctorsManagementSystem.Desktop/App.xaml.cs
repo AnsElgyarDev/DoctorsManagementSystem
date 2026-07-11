@@ -15,6 +15,7 @@ public partial class App : Application
 
     public App()
     {
+        QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
         _host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((_, config) =>
             {
@@ -66,7 +67,8 @@ public partial class App : Application
 
         services.AddTransient<Views.Pages.PatientsPage>();
         services.AddTransient<ViewModels.Pages.PatientsViewModel>();
-
+        services.AddSingleton<Infrastructure.Dialogs.IFileDialogService, Infrastructure.Dialogs.FileDialogService>();
+        services.AddSingleton<Services.IPatientPdfExportService, Services.PatientPdfExportService>();
         services.AddTransient<Views.Pages.PatientDetailsPage>();
         services.AddTransient<ViewModels.Pages.PatientDetailsViewModel>();
         services.AddTransient<ViewModels.Dialogs.AddPrescriptionViewModel>();
