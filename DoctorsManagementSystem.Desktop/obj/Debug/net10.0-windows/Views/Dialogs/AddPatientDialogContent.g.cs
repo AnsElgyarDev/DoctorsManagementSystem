@@ -56,8 +56,8 @@ namespace DoctorsManagementSystem.Desktop.Views.Dialogs {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri(("/DoctorsManagementSystem.Desktop;V1.0.0.0;component/views/dialogs/addpatientdialo" +
-                    "gcontent.xaml"), System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri(("/DoctorsManagementSystem.Desktop;component/views/dialogs/addpatientdialogcontent." +
+                    "xaml"), System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Views\Dialogs\AddPatientDialogContent.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

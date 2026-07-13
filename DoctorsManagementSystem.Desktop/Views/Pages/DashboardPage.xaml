@@ -12,6 +12,7 @@
 
     <Page.Resources>
         <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
+        <converters:AddOneConverter x:Key="AddOneConverter" />
     </Page.Resources>
 
     <Grid Margin="24">
@@ -138,6 +139,7 @@
                             ItemsSource="{Binding ViewModel.LatestPatients}"
                             AutoGenerateColumns="False"
                             IsReadOnly="True"
+                            AlternationCount="9999"
                             CanUserAddRows="False"
                             CanUserDeleteRows="False"
                             GridLinesVisibility="Horizontal"
@@ -148,7 +150,7 @@
                             HorizontalScrollBarVisibility="Auto"
                             Padding="4">
                             <ui:DataGrid.Columns>
-                                <DataGridTextColumn Header="ID" Binding="{Binding PatientId}" Width="70" />
+                                <DataGridTextColumn Header="ID" Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=AlternationIndex, Converter={StaticResource AddOneConverter}}" Width="50" />
                                 <DataGridTextColumn Header="Name" Binding="{Binding PatientName}" Width="*" />
                                 <DataGridTextColumn Header="Phone" Binding="{Binding PatientPhone}" Width="150" />
                                 <DataGridTextColumn Header="Registered On" Binding="{Binding RegisteredAt, StringFormat=d}" Width="150" />
