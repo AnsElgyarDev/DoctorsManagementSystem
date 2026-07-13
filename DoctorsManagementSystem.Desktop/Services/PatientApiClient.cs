@@ -26,44 +26,33 @@ public class PatientApiClient : IPatientApiClient
         };
     }
 
-    public async Task<IReadOnlyList<Patient>> GetAllPatientsAsync(CancellationToken cancellationToken = default)
+        public async Task<PagedResult<Patient>> GetAllPatientsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
+        var endpoint = $"{PatientsEndpoint}?pageNumber={pageNumber}&pageSize={pageSize}";
+
         try
         {
-            using var response = await _httpClient.GetAsync(PatientsEndpoint, cancellationToken);
+            using var response = await _httpClient.GetAsync(endpoint, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                _logger.LogInformation("No patients returned by the API (empty clinic roster).");
-                return Array.Empty<Patient>();
+                return new PagedResult<Patient> { PageNumber = pageNumber, PageSize = pageSize };
             }
 
             if (!response.IsSuccessStatusCode)
             {
                 var message = await ExtractErrorMessageAsync(response, cancellationToken);
-                _logger.LogError("GET {Endpoint} failed with status {StatusCode}: {Message}",
-                    PatientsEndpoint, (int)response.StatusCode, message);
                 throw new ApiException(message, (int)response.StatusCode);
             }
 
-            var patients = await response.Content.ReadFromJsonAsync<List<Patient>>(_jsonOptions, cancellationToken);
-            return patients ?? new List<Patient>();
+            var pagedResult = await response.Content.ReadFromJsonAsync<PagedResult<Patient>>(_jsonOptions, cancellationToken);
+            return pagedResult ?? new PagedResult<Patient> { PageNumber = pageNumber, PageSize = pageSize };
         }
         catch (ApiException) { throw; }
-        catch (HttpRequestException ex)
+        catch (Exception ex)
         {
-            _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
-            throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
-        }
-        catch (JsonException ex)
-        {
-            _logger.LogError(ex, "Failed to parse the patients response from the API.");
-            throw new ApiException("The server returned data in an unexpected format.", innerException: ex);
-        }
-        catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
-        {
-            _logger.LogError(ex, "The request to the API timed out.");
-            throw new ApiException("The request timed out. Please check your connection and try again.", innerException: ex);
+            _logger.LogError(ex, "Error fetching paged patients.");
+            throw new ApiException("Error connecting to server.", innerException: ex);
         }
     }
 

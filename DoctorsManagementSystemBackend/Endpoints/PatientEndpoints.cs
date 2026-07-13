@@ -14,17 +14,17 @@ public static class PatientEndpoints
     public static void UsePatientEndpoints(this WebApplication app)
     {
         // Get Endpoints        
-        app.MapGet("/Patients", Results<NotFound<string>, Ok<IEnumerable<Patient>>>
-                  (IPatientServices patientServices) =>
+       app.MapGet("/Patients", Results<NotFound<string>, Ok<PagedResult<Patient>>>
+          (IPatientServices patientServices, int pageNumber = 1, int pageSize = 15) =>
         {
-            var Patients = patientServices.GetAllPatients();
-            
-            if (Patients == null || !Patients.Any())
+            var pagedPatients = patientServices.GetAllPatients(pageNumber, pageSize);
+
+            if (pagedPatients.TotalCount == 0)
             {
-                return TypedResults.NotFound("There are no patients yet."); 
+                return TypedResults.NotFound("There are no patients yet.");
             }
 
-            return TypedResults.Ok(Patients);
+            return TypedResults.Ok(pagedPatients);
         });
 
         app.MapGet("/Patients/{PatientId}", Results<NotFound<string>, Ok<Patient>>

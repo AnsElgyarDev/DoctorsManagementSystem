@@ -5,7 +5,7 @@ namespace DoctorsManagementSystem.Service;
 
 public interface IPatientServices
 {
-    IEnumerable<Patient> GetAllPatients();
+    PagedResult<Patient> GetAllPatients(int pageNumber, int pageSize);
     Patient? GetPatientsById(int PatientId);
     IEnumerable<Prescription> GetPatientsPrescription(int PatientId);
     Patient RegisterPatient (PatientDto patientDto);

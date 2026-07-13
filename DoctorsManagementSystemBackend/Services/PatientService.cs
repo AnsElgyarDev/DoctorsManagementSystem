@@ -47,7 +47,30 @@ class PatientServices : IPatientServices
         return true;
     }
 
-    public IEnumerable<Patient> GetAllPatients() => _Context.Patients;
+    public PagedResult<Patient> GetAllPatients(int pageNumber, int pageSize)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 15;
+
+        var query = _Context.Patients.OrderBy(p => p.PatientId); 
+
+        var totalCount = query.Count();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        var items = query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return new PagedResult<Patient>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = totalPages
+        };
+    }
 
     public async Task<List<Operation>?> GetPatientOperationsAsync(int patientId)
     {

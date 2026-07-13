@@ -5,7 +5,7 @@ namespace DoctorsManagementSystem.Desktop.Services;
 
 public interface IPatientApiClient
 {
-    Task<IReadOnlyList<Patient>> GetAllPatientsAsync(CancellationToken cancellationToken = default);
+    Task<PagedResult<Patient>> GetAllPatientsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<Patient> CreatePatientAsync(PatientDto patientDto, CancellationToken cancellationToken = default);
     Task<Patient> GetPatientByIdAsync(int patientId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<PrescriptionSummary>> GetPatientPrescriptionsAsync(int patientId, CancellationToken cancellationToken = default);
