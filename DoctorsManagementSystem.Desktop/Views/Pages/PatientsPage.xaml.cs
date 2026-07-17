@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 using DoctorsManagementSystem.Desktop.ViewModels.Pages;
 
@@ -14,12 +15,21 @@ public partial class PatientsPage : Page
 
         InitializeComponent();
 
-        Loaded += async (_, _) =>
+        Loaded += OnPageLoaded;
+    }
+
+    private async void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
+        // IsRunning (from CommunityToolkit's generated IAsyncRelayCommand) plus
+        // the ViewModel's own internal guard together stop a duplicate Loaded
+        // firing — a known Frame/NavigationView quirk during page transitions —
+        // from kicking off a second, overlapping load.
+        if (ViewModel.LoadPatientsCommand.IsRunning)
+            return;
+
+        if (ViewModel.LoadPatientsCommand.CanExecute(null))
         {
-            if (ViewModel.LoadPatientsCommand.CanExecute(null))
-            {
-                await ViewModel.LoadPatientsCommand.ExecuteAsync(null);
-            }
-        };
+            await ViewModel.LoadPatientsCommand.ExecuteAsync(null);
+        }
     }
 }

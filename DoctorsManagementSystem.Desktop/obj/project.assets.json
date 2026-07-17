@@ -18,6 +18,27 @@
           "buildTransitive/CommunityToolkit.Mvvm.targets": {}
         }
       },
+      "Mapster/10.0.11": {
+        "type": "package",
+        "dependencies": {
+          "Mapster.Core": "10.0.11"
+        },
+        "compile": {
+          "lib/net10.0/Mapster.dll": {}
+        },
+        "runtime": {
+          "lib/net10.0/Mapster.dll": {}
+        }
+      },
+      "Mapster.Core/10.0.11": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Mapster.Core.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Mapster.Core.dll": {}
+        }
+      },
       "Microsoft.Extensions.Configuration/10.0.9": {
         "type": "package",
         "dependencies": {
@@ -767,6 +788,35 @@
         "lib/netstandard2.0/CommunityToolkit.Mvvm.xml",
         "lib/netstandard2.1/CommunityToolkit.Mvvm.dll",
         "lib/netstandard2.1/CommunityToolkit.Mvvm.xml"
+      ]
+    },
+    "Mapster/10.0.11": {
+      "sha512": "MesrjeIg4lyaxJKVFHysc1GH4TooIuuY/RJRCgBPoFwDD3D1tngF362cKBkxhxR/8EhpfMfGLeU4nzCEz6hPaQ==",
+      "type": "package",
+      "path": "mapster/10.0.11",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/net10.0/Mapster.dll",
+        "lib/net8.0/Mapster.dll",
+        "lib/net9.0/Mapster.dll",
+        "lib/netstandard2.0/Mapster.dll",
+        "mapster.10.0.11.nupkg.sha512",
+        "mapster.nuspec"
+      ]
+    },
+    "Mapster.Core/10.0.11": {
+      "sha512": "vpChY4hsk+CvIR3AFN/uQJkkP6gwYSUZFnuqgWBiTTbThbFEnB6chP7QUoSWZBcuPAnOjol09Ev7F1PVwECAIg==",
+      "type": "package",
+      "path": "mapster.core/10.0.11",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/netstandard2.0/Mapster.Core.dll",
+        "mapster.core.10.0.11.nupkg.sha512",
+        "mapster.core.nuspec"
       ]
     },
     "Microsoft.Extensions.Configuration/10.0.9": {
@@ -1788,6 +1838,7 @@
     "net10.0-windows": [
       "CommunityToolkit.Mvvm >= 8.4.2",
       "DoctorsManagementSystem.Shared >= 1.0.0",
+      "Mapster >= 10.0.11",
       "Microsoft.Extensions.Hosting >= 10.0.9",
       "Microsoft.Extensions.Http >= 10.0.9",
       "QuestPDF >= 2026.7.0",
@@ -1853,6 +1904,10 @@
           "CommunityToolkit.Mvvm": {
             "target": "Package",
             "version": "[8.4.2, )"
+          },
+          "Mapster": {
+            "target": "Package",
+            "version": "[10.0.11, )"
           },
           "Microsoft.Extensions.Hosting": {
             "target": "Package",

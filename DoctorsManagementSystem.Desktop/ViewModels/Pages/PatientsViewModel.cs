@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using Mapster;
 
 namespace DoctorsManagementSystem.Desktop.ViewModels.Pages;
 
@@ -22,6 +23,11 @@ public partial class PatientsViewModel : ObservableObject
     private readonly IContentDialogService _contentDialogService;
     private readonly IServiceProvider _serviceProvider;
     private readonly Infrastructure.Navigation.INavigationService _navigationService;
+
+    // Reentrancy guard — prevents two overlapping LoadPatientsAsync executions
+    // (e.g. a duplicate Loaded event from a Frame navigation transition, or a
+    // fast double-click on Refresh) from mutating the collections concurrently.
+    private bool _isLoadInProgress;
 
     public PatientsViewModel(
         IPatientApiClient patientApiClient,
@@ -66,36 +72,46 @@ public partial class PatientsViewModel : ObservableObject
     [RelayCommand]
     private async Task LoadPatientsAsync()
     {
-        State = PatientsLoadState.Loading;
-        ErrorMessage = string.Empty;
+        if (_isLoadInProgress)
+            return;
+
+        _isLoadInProgress = true;
 
         try
         {
-            var result = await _patientApiClient.GetAllPatientsAsync(CurrentPage, PageSize);
+            State = PatientsLoadState.Loading;
+            ErrorMessage = string.Empty;
 
-            Patients.Clear();
-            foreach (var patient in result.Items)
+            // Bounded, non-recursive: at most 2 attempts. Attempt 0 fetches the
+            // requested page; if the server reports CurrentPage is now beyond
+            // TotalPages (e.g. after deletions shrank the dataset), attempt 1
+            // retries once with the corrected page number. This loop can never
+            // run more than twice — there is no recursive self-call anywhere.
+            for (var attempt = 0; attempt < 2; attempt++)
             {
-                Patients.Add(patient);
+                var result = await _patientApiClient.GetAllPatientsAsync(CurrentPage, PageSize);
+
+                TotalPages = Math.Max(result.TotalPages, 1);
+                HasPreviousPage = result.HasPreviousPage;
+                HasNextPage = result.HasNextPage;
+
+                if (CurrentPage > TotalPages && attempt == 0)
+                {
+                    CurrentPage = TotalPages;
+                    continue;
+                }
+
+                Patients.Clear();
+                foreach (var patient in result.Items)
+                {
+                    Patients.Add(patient.Adapt<Patient>());
+                }
+
+                RebuildPageButtons();
+
+                State = Patients.Count == 0 ? PatientsLoadState.Empty : PatientsLoadState.Loaded;
+                break;
             }
-
-            TotalPages = Math.Max(result.TotalPages, 1);
-            HasPreviousPage = result.HasPreviousPage;
-            HasNextPage = result.HasNextPage;
-
-            // If a delete (or a shrinking dataset) leaves CurrentPage beyond the
-            // valid range, snap back to the last real page instead of showing an
-            // empty grid with live "next/previous" controls that make no sense.
-            if (CurrentPage > TotalPages)
-            {
-                CurrentPage = TotalPages;
-                await LoadPatientsAsync();
-                return;
-            }
-
-            RebuildPageButtons();
-
-            State = Patients.Count == 0 ? PatientsLoadState.Empty : PatientsLoadState.Loaded;
         }
         catch (ApiException ex)
         {
@@ -108,6 +124,10 @@ public partial class PatientsViewModel : ObservableObject
             _logger.LogError(ex, "Unexpected error while loading patients.");
             ErrorMessage = "Something went wrong while loading patients. Please try again.";
             State = PatientsLoadState.Error;
+        }
+        finally
+        {
+            _isLoadInProgress = false;
         }
     }
 
@@ -146,6 +166,9 @@ public partial class PatientsViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(HasPreviousPage))]
     private async Task PreviousPageAsync()
     {
+        if (_isLoadInProgress)
+            return;
+
         CurrentPage--;
         await LoadPatientsAsync();
     }
@@ -153,6 +176,9 @@ public partial class PatientsViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(HasNextPage))]
     private async Task NextPageAsync()
     {
+        if (_isLoadInProgress)
+            return;
+
         CurrentPage++;
         await LoadPatientsAsync();
     }
@@ -160,7 +186,10 @@ public partial class PatientsViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateToPageAsync(PageButtonItem pageButton)
     {
-        if (pageButton.IsEllipsis || pageButton.PageNumber == CurrentPage)
+        if (_isLoadInProgress)
+            return;
+
+        if (pageButton is null || pageButton.IsEllipsis || pageButton.PageNumber == CurrentPage)
             return;
 
         CurrentPage = pageButton.PageNumber;
@@ -234,10 +263,6 @@ public partial class PatientsViewModel : ObservableObject
         try
         {
             await _patientApiClient.DeletePatientAsync(patient.PatientId);
-
-            // Reload rather than remove-in-place: with server-side pagination,
-            // totals/page boundaries may have shifted (e.g. the last item on the
-            // last page was just deleted), so a local removal can't reflect that.
             await LoadPatientsAsync();
         }
         catch (ApiException ex)

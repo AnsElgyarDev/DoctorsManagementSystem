@@ -26,36 +26,54 @@ public class PatientApiClient : IPatientApiClient
         };
     }
 
-        public async Task<PagedResult<Patient>> GetAllPatientsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+public async Task<PagedResult<Patient>> GetAllPatientsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+{
+    var endpoint = $"{PatientsEndpoint}?pageNumber={pageNumber}&pageSize={pageSize}";
+    try
     {
-        var endpoint = $"{PatientsEndpoint}?pageNumber={pageNumber}&pageSize={pageSize}";
+        using var response = await _httpClient.GetAsync(endpoint, cancellationToken);
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            _logger.LogInformation("No patients returned by the API (empty clinic roster).");
+            return new PagedResult<Patient> { PageNumber = pageNumber, PageSize = pageSize };
+        }
 
+        var rawBody = await response.Content.ReadAsStringAsync(cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var message = await ExtractErrorMessageAsync(response, rawBody);
+            _logger.LogError("GET {Endpoint} failed with status {StatusCode}: {Message}",
+                endpoint, (int)response.StatusCode, message);
+            throw new ApiException(message, (int)response.StatusCode);
+        }
+
+        _logger.LogDebug("GET {Endpoint} raw response: {RawBody}", endpoint, rawBody);
         try
         {
-            using var response = await _httpClient.GetAsync(endpoint, cancellationToken);
-
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                return new PagedResult<Patient> { PageNumber = pageNumber, PageSize = pageSize };
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var message = await ExtractErrorMessageAsync(response, cancellationToken);
-                throw new ApiException(message, (int)response.StatusCode);
-            }
-
-            var pagedResult = await response.Content.ReadFromJsonAsync<PagedResult<Patient>>(_jsonOptions, cancellationToken);
+            var pagedResult = JsonSerializer.Deserialize<PagedResult<Patient>>(rawBody, _jsonOptions);
             return pagedResult ?? new PagedResult<Patient> { PageNumber = pageNumber, PageSize = pageSize };
         }
-        catch (ApiException) { throw; }
-        catch (Exception ex)
+        catch (JsonException parseEx)
         {
-            _logger.LogError(ex, "Error fetching paged patients.");
-            throw new ApiException("Error connecting to server.", innerException: ex);
+            _logger.LogError(parseEx, "Failed to parse patients response. Raw body was: {RawBody}", rawBody);
+            throw new ApiException(
+                $"The server returned data in an unexpected format. Raw response: {rawBody}",
+                (int)response.StatusCode,
+                parseEx);
         }
     }
-
+    catch (ApiException) { throw; }
+    catch (HttpRequestException ex)
+    {
+        _logger.LogError(ex, "Could not reach the API at {BaseAddress}.", _httpClient.BaseAddress);
+        throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
+    }
+    catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+    {
+        _logger.LogError(ex, "The request to the API timed out.");
+        throw new ApiException("The request timed out. Please check your connection and try again.", innerException: ex);
+    }
+}
     public async Task<Patient> CreatePatientAsync(PatientDto patientDto, CancellationToken cancellationToken = default)
     {
         try
@@ -350,4 +368,20 @@ public async Task AddOperationAsync(int patientId, OperationDto operationDto, Ca
             throw new ApiException("Could not reach the clinic server. Please check that the backend is running and try again.", innerException: ex);
         }
     }
+    private static async Task<string> ExtractErrorMessageAsync(HttpResponseMessage response, string body)
+{
+    if (string.IsNullOrWhiteSpace(body))
+        return $"The server returned an unexpected error ({(int)response.StatusCode}).";
+    try
+    {
+        var problem = JsonSerializer.Deserialize<ApiProblemDetails>(
+            body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (problem is not null && (!string.IsNullOrWhiteSpace(problem.Detail) || !string.IsNullOrWhiteSpace(problem.Title)))
+            return problem.Detail ?? problem.Title!;
+    }
+    catch (JsonException)
+    {
+    }
+    return body;
+}
 }

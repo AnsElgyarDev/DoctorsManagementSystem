@@ -23,38 +23,38 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-            <!-- Header -->
-    <Grid Grid.Row="0" Margin="0,0,0,16">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0">
-            <TextBlock Text="Patients" FontSize="28" FontWeight="SemiBold" />
-            <TextBlock
-                Text="All registered patients in the clinic"
-                FontSize="13"
-                Opacity="0.6"
-                Margin="0,4,0,0" />
-        </StackPanel>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Patients" FontSize="28" FontWeight="SemiBold" />
+                <TextBlock
+                    Text="All registered patients in the clinic"
+                    FontSize="13"
+                    Opacity="0.6"
+                    Margin="0,4,0,0" />
+            </StackPanel>
 
-        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-            <ui:Button
-                Content="Add Patient"
-                Icon="{ui:SymbolIcon PersonAdd24}"
-                Command="{Binding ViewModel.OpenAddPatientDialogCommand}"
-                Appearance="Primary"
-                Margin="0,0,8,0" />
-            <ui:Button
-                Content="Refresh"
-                Icon="{ui:SymbolIcon ArrowClockwise24}"
-                Command="{Binding ViewModel.LoadPatientsCommand}"
-                Appearance="Secondary" />
-        </StackPanel>
-    </Grid>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <ui:Button
+                    Content="Add Patient"
+                    Icon="{ui:SymbolIcon PersonAdd24}"
+                    Command="{Binding ViewModel.OpenAddPatientDialogCommand}"
+                    Appearance="Primary"
+                    Margin="0,0,8,0" />
+                <ui:Button
+                    Content="Refresh"
+                    Icon="{ui:SymbolIcon ArrowClockwise24}"
+                    Command="{Binding ViewModel.LoadPatientsCommand}"
+                    Appearance="Secondary" />
+            </StackPanel>
+        </Grid>
 
-        <!-- Content area: exactly one panel visible at a time, driven by ViewModel.State -->
+        <!-- Content area: exactly one panel visible at a time, driven by State -->
         <Grid Grid.Row="1">
 
             <!-- Loading -->
@@ -120,115 +120,110 @@
                     HorizontalAlignment="Center" />
             </StackPanel>
 
-            <!-- Loaded: the actual data grid -->
+            <!-- Loaded: grid + pagination -->
             <Grid
-    Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Loaded}">
-    <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
+                Visibility="{Binding ViewModel.State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Loaded}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-    <Border Grid.Row="0" CornerRadius="8" BorderThickness="1">
-        <ui:DataGrid
-            ItemsSource="{Binding ViewModel.Patients}"
-            AutoGenerateColumns="False"
-            IsReadOnly="True"
-            AlternationCount="9999"
-            CanUserAddRows="False"
-            CanUserDeleteRows="False"
-            CanUserReorderColumns="True"
-            CanUserResizeColumns="True"
-            GridLinesVisibility="Horizontal"
-            HeadersVisibility="Column"
-            RowHeight="44"
-            VerticalScrollBarVisibility="Auto"
-            HorizontalScrollBarVisibility="Auto"
-            Padding="4">
-            <ui:DataGrid.Columns>
-                <DataGridTextColumn Header="#" 
-                                    Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=AlternationIndex, Converter={StaticResource AddOneConverter}}" 
-                                    Width="50" />
-                
-                <DataGridTextColumn Header="Name" Binding="{Binding PatientName}" Width="*" />
-                <DataGridTextColumn Header="Phone" Binding="{Binding PatientPhone}" Width="150" />
-                <DataGridTextColumn Header="Email" Binding="{Binding PatientEmail}" Width="220" />
-                <DataGridTextColumn Header="Total Bill" Binding="{Binding TotalBill, StringFormat={}{0:C}}" Width="130" />
-                <DataGridTextColumn Header="Prescriptions" Binding="{Binding Prescriptions.Count}" Width="120" />
-                
-                <DataGridTemplateColumn Header="Actions" Width="250">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <ui:Button
-                                    Content="View"
-                                    Appearance="Secondary"
-                                    Margin="0,0,6,0"
-                                    Command="{Binding DataContext.ViewModel.OpenPatientDetailsCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
-                                    CommandParameter="{Binding}" />
-                                <ui:Button
-                                    Content="Modify"
-                                    Appearance="Caution"
-                                    Margin="0,0,6,0"
-                                    Command="{Binding DataContext.ViewModel.OpenEditPatientDialogCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
-                                    CommandParameter="{Binding}" />
-                                <ui:Button
-                                    Content="Delete"
-                                    Appearance="Danger"
-                                    Command="{Binding DataContext.ViewModel.DeletePatientCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
-                                    CommandParameter="{Binding}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </ui:DataGrid.Columns>
-        </ui:DataGrid>
-    </Border>
+                <Border Grid.Row="0" CornerRadius="8" BorderThickness="1">
+                    <ui:DataGrid
+                        ItemsSource="{Binding ViewModel.Patients}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        CanUserReorderColumns="True"
+                        CanUserResizeColumns="True"
+                        GridLinesVisibility="Horizontal"
+                        HeadersVisibility="Column"
+                        RowHeight="44"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto"
+                        Padding="4">
+                        <ui:DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding PatientId}" Width="70" />
+                            <DataGridTextColumn Header="Name" Binding="{Binding PatientName}" Width="*" />
+                            <DataGridTextColumn Header="Phone" Binding="{Binding PatientPhone}" Width="150" />
+                            <DataGridTextColumn Header="Email" Binding="{Binding PatientEmail}" Width="220" />
+                            <DataGridTextColumn Header="Total Bill" Binding="{Binding TotalBill, StringFormat={}{0:C}}" Width="130" />
+                            <DataGridTextColumn Header="Prescriptions" Binding="{Binding Prescriptions.Count}" Width="120" />
+                            <DataGridTemplateColumn Header="Actions" Width="250">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ui:Button
+                                                Content="View"
+                                                Appearance="Secondary"
+                                                Margin="0,0,6,0"
+                                                Command="{Binding DataContext.ViewModel.OpenPatientDetailsCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
+                                                CommandParameter="{Binding}" />
+                                            <ui:Button
+                                                Content="Modify"
+                                                Appearance="Caution"
+                                                Margin="0,0,6,0"
+                                                Command="{Binding DataContext.ViewModel.OpenEditPatientDialogCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
+                                                CommandParameter="{Binding}" />
+                                            <ui:Button
+                                                Content="Delete"
+                                                Appearance="Danger"
+                                                Command="{Binding DataContext.ViewModel.DeletePatientCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:DataGrid}}}"
+                                                CommandParameter="{Binding}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </ui:DataGrid.Columns>
+                    </ui:DataGrid>
+                </Border>
 
-    <StackPanel
-        Grid.Row="1"
-        Orientation="Horizontal"
-        HorizontalAlignment="Center"
-        Margin="0,16,0,0">
+                <StackPanel
+                    Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0,16,0,0">
 
-        <ui:Button
-            Icon="{ui:SymbolIcon ChevronLeft24}"
-            Command="{Binding ViewModel.PreviousPageCommand}"
-            Appearance="Secondary"
-            Margin="0,0,8,0" />
+                    <ui:Button
+                        Icon="{ui:SymbolIcon ChevronLeft24}"
+                        Command="{Binding ViewModel.PreviousPageCommand}"
+                        Appearance="Secondary"
+                        Margin="0,0,8,0" />
 
-        <ItemsControl ItemsSource="{Binding ViewModel.PageButtons}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="2,0" Width="36">
-                        <TextBlock
-                            Text="..."
-                            VerticalAlignment="Center"
-                            TextAlignment="Center"
-                            Opacity="0.6"
-                            Visibility="{Binding IsEllipsis, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <ui:Button
-                            Content="{Binding PageNumber}"
-                            Appearance="{Binding IsCurrentPage, Converter={StaticResource BoolToButtonAppearanceConverter}}"
-                            Command="{Binding DataContext.ViewModel.NavigateToPageCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                            CommandParameter="{Binding}"
-                            Visibility="{Binding IsEllipsis, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                    <ItemsControl ItemsSource="{Binding ViewModel.PageButtons}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="2,0" Width="36">
+                                    <TextBlock
+                                        Text="..."
+                                        VerticalAlignment="Center"
+                                        TextAlignment="Center"
+                                        Opacity="0.6"
+                                        Visibility="{Binding IsEllipsis, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <ui:Button
+                                        Content="{Binding PageNumber}"
+                                        Appearance="{Binding IsCurrentPage, Converter={StaticResource BoolToButtonAppearanceConverter}}"
+                                        Command="{Binding DataContext.ViewModel.NavigateToPageCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding IsEllipsis, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-        <ui:Button
-            Icon="{ui:SymbolIcon ChevronRight24}"
-            Command="{Binding ViewModel.NextPageCommand}"
-            Appearance="Secondary"
-            Margin="8,0,0,0" />
-    </StackPanel>
-</Grid>
+                    <ui:Button
+                        Icon="{ui:SymbolIcon ChevronRight24}"
+                        Command="{Binding ViewModel.NextPageCommand}"
+                        Appearance="Secondary"
+                        Margin="8,0,0,0" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

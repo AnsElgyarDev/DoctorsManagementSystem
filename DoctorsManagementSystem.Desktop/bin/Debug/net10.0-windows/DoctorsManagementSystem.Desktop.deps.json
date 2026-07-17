@@ -10,6 +10,7 @@
         "dependencies": {
           "CommunityToolkit.Mvvm": "8.4.2",
           "DoctorsManagementSystem.Shared": "1.0.0",
+          "Mapster": "10.0.11",
           "Microsoft.Extensions.Hosting": "10.0.9",
           "Microsoft.Extensions.Http": "10.0.9",
           "QuestPDF": "2026.7.0",
@@ -24,6 +25,25 @@
           "lib/net8.0/CommunityToolkit.Mvvm.dll": {
             "assemblyVersion": "8.4.0.0",
             "fileVersion": "8.4.2.1"
+          }
+        }
+      },
+      "Mapster/10.0.11": {
+        "dependencies": {
+          "Mapster.Core": "10.0.11"
+        },
+        "runtime": {
+          "lib/net10.0/Mapster.dll": {
+            "assemblyVersion": "10.0.11.0",
+            "fileVersion": "10.0.11.0"
+          }
+        }
+      },
+      "Mapster.Core/10.0.11": {
+        "runtime": {
+          "lib/netstandard2.0/Mapster.Core.dll": {
+            "assemblyVersion": "10.0.11.0",
+            "fileVersion": "10.0.11.0"
           }
         }
       },
@@ -522,6 +542,20 @@
       "sha512": "sha512-WadCzGEc2U+3e20avRLng4qNtt4zoOGWrdUISqJWrHe3/FSnrYjuM5Sb4yQb09LhkBXrrI4Zt3dLKgRMbItsrg==",
       "path": "communitytoolkit.mvvm/8.4.2",
       "hashPath": "communitytoolkit.mvvm.8.4.2.nupkg.sha512"
+    },
+    "Mapster/10.0.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MesrjeIg4lyaxJKVFHysc1GH4TooIuuY/RJRCgBPoFwDD3D1tngF362cKBkxhxR/8EhpfMfGLeU4nzCEz6hPaQ==",
+      "path": "mapster/10.0.11",
+      "hashPath": "mapster.10.0.11.nupkg.sha512"
+    },
+    "Mapster.Core/10.0.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vpChY4hsk+CvIR3AFN/uQJkkP6gwYSUZFnuqgWBiTTbThbFEnB6chP7QUoSWZBcuPAnOjol09Ev7F1PVwECAIg==",
+      "path": "mapster.core/10.0.11",
+      "hashPath": "mapster.core.10.0.11.nupkg.sha512"
     },
     "Microsoft.Extensions.Configuration/10.0.9": {
       "type": "package",

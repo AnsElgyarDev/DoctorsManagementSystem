@@ -24,4 +24,10 @@
     <ProjectReference Include="..\DoctorsManagementSystem.Shared\DoctorsManagementSystem.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+  <None Update="appsettings.json">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
+
 </Project>

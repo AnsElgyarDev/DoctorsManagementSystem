@@ -7,8 +7,17 @@ namespace DoctorsManagementSystem.Desktop.Infrastructure.Converters;
 public class BoolToButtonAppearanceConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => (value is true) ? ControlAppearance.Primary : ControlAppearance.Secondary;
+    {
+        try
+        {
+            return (value is true) ? ControlAppearance.Primary : ControlAppearance.Secondary;
+        }
+        catch
+        {
+            return ControlAppearance.Secondary;
+        }
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => throw new NotSupportedException();
+        => Binding.DoNothing;
 }

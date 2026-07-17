@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Wpf.Ui.Appearance;
 using DoctorsManagementSystem.Desktop.ViewModels;
 using DoctorsManagementSystem.Desktop.Views;
+using Microsoft.Extensions.Logging;
 
 namespace DoctorsManagementSystem.Desktop;
 
@@ -81,6 +82,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        DispatcherUnhandledException += OnDispatcherUnhandledException;
+
         await _host.StartAsync();
 
         ApplicationThemeManager.Apply(ApplicationTheme.Dark);
@@ -88,9 +91,22 @@ public partial class App : Application
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
 
-        // Land on the Dashboard immediately instead of a blank content area
         var navigationService = _host.Services.GetRequiredService<Infrastructure.Navigation.INavigationService>();
         navigationService.Navigate<Views.Pages.DashboardPage>();
+    }
+
+    private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
+        var logger = _host.Services.GetService<ILogger<App>>();
+        logger?.LogError(e.Exception, "Unhandled exception on the UI thread.");
+
+        System.Windows.MessageBox.Show(
+            $"An unexpected error occurred:\n\n{e.Exception.Message}",
+            "Unexpected Error",
+            System.Windows.MessageBoxButton.OK,
+            System.Windows.MessageBoxImage.Error);
+
+        e.Handled = true;
     }
 
 

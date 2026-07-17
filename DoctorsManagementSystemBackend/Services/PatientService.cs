@@ -47,30 +47,26 @@ class PatientServices : IPatientServices
         return true;
     }
 
-    public PagedResult<Patient> GetAllPatients(int pageNumber, int pageSize)
+public DoctorsManagementSystem.Dto.PagedResult<Patient> GetAllPatients(int pageNumber, int pageSize)
+{
+    var totalCount = _Context.Patients.Count(); 
+
+    var items = _Context.Patients
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+    var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+    return new DoctorsManagementSystem.Dto.PagedResult<Patient>
     {
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 15;
-
-        var query = _Context.Patients.OrderBy(p => p.PatientId); 
-
-        var totalCount = query.Count();
-        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-
-        var items = query
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        return new PagedResult<Patient>
-        {
-            Items = items,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalCount = totalCount,
-            TotalPages = totalPages
-        };
-    }
+        Items = items,
+        PageNumber = pageNumber,
+        PageSize = pageSize,
+        TotalCount = totalCount,
+        TotalPages = totalPages
+    };
+}
 
     public async Task<List<Operation>?> GetPatientOperationsAsync(int patientId)
     {
