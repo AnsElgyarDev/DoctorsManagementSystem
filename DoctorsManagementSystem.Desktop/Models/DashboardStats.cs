@@ -4,8 +4,6 @@ namespace DoctorsManagementSystem.Desktop.Models;
 
 public class DashboardStats
 {
-    [JsonPropertyName("todayAppointmentsCount")]
-    public int TodayAppointmentsCount { get; set; }
 
     [JsonPropertyName("monthlyRevenue")]
     public decimal MonthlyRevenue { get; set; }

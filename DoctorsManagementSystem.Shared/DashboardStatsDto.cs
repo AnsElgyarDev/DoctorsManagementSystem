@@ -1,8 +1,8 @@
 namespace DoctorsManagementSystem.Shared.Dtos;
 
+
 public record DashboardStatsDto
 {
-    public int TodayAppointmentsCount { get; init; }
     public decimal MonthlyRevenue { get; init; }
     public int UpcomingOperationsCount { get; init; }
     public List<LatestPatientDto> LatestPatients { get; init; } = new();

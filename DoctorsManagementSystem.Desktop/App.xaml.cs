@@ -75,6 +75,7 @@ public partial class App : Application
         services.AddTransient<ViewModels.Dialogs.AddPrescriptionViewModel>();
         services.AddTransient<ViewModels.Dialogs.AddOperationViewModel>();
         services.AddSingleton<Services.IDashboardApiClient, Services.DashboardApiClient>();
+        services.AddSingleton<Services.IAppointmentApiClient, Services.AppointmentApiClient>();
     }
 
 

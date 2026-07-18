@@ -14,6 +14,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddScoped<IDashboardServices, DashboardServices>();   
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddScoped<IPatientServices, PatientServices>();
+builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
 
 builder.Services.AddCors(options =>
 {
@@ -42,4 +43,5 @@ app.UseMiddleware<RequestLogMiddleware>();
 
 app.UsePatientEndpoints();
 app.UseDashboardEndpoints();
+app.UseAppointmentEndpoints();
 app.Run();

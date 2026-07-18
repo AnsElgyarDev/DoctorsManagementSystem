@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/Dcotor's Management System/DoctorsManagementSystem.Desktop",
-      "program": "d:/Dcotor's Management System/DoctorsManagementSystem.Desktop/build/Debug/outDebug",
+      "cwd": "d:/Dcotor's Management System",
+      "program": "d:/Dcotor's Management System/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

@@ -17,16 +17,19 @@ public partial class DashboardViewModel : ObservableObject
     private readonly IDashboardApiClient _dashboardApiClient;
     private readonly ILogger<DashboardViewModel> _logger;
     private readonly IContentDialogService _contentDialogService;
+    private readonly IAppointmentApiClient _appointmentApiClient;
     private readonly IServiceProvider _serviceProvider;
 
     public DashboardViewModel(
         IDashboardApiClient dashboardApiClient,
+        IAppointmentApiClient appointmentApiClient,
         ILogger<DashboardViewModel> logger,
         IContentDialogService contentDialogService,
         IServiceProvider serviceProvider)
     {
         _dashboardApiClient = dashboardApiClient;
         _logger = logger;
+        _appointmentApiClient = appointmentApiClient;
         _contentDialogService = contentDialogService;
         _serviceProvider = serviceProvider;
     }
@@ -46,9 +49,14 @@ public partial class DashboardViewModel : ObservableObject
 
         try
         {
-            var stats = await _dashboardApiClient.GetDashboardStatsAsync();
+            var statsTask = _dashboardApiClient.GetDashboardStatsAsync();
+            var appointmentsCountTask = _appointmentApiClient.GetTodayAppointmentsCountAsync();
 
-            TodayAppointmentsCount = stats.TodayAppointmentsCount;
+            await Task.WhenAll(statsTask, appointmentsCountTask);
+
+            var stats = statsTask.Result;
+            
+            TodayAppointmentsCount = appointmentsCountTask.Result;
             MonthlyRevenue = stats.MonthlyRevenue;
             UpcomingOperationsCount = stats.UpcomingOperationsCount;
 
